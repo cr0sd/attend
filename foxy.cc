@@ -51,7 +51,7 @@ FXDEFMAP(mywin) mywinMap[]=
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
 
 // mywin  CLASS CONSTRUCTOR!!
-mywin::mywin(FXApp*a) : FXMainWindow(a,"window")
+mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 {
 	// Set up GUI stuff -----
 

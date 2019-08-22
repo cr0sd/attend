@@ -8,7 +8,7 @@
 int main(int argc,char**argv)
 {
 	// Everything is done in mywin
-	FXApp a;
+	FXApp a("Attend","Attend");
 	a.init(argc,argv);
 	new mywin(&a);
 	a.create();
