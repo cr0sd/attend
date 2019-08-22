@@ -13,6 +13,7 @@ class mywin : public FXMainWindow
 	FXButton	*buttonSignout;
 	FXMenuBar	*menubar;
 	FXMenuPane	*mpFile;
+	FXFileDialog *dialogBox;
 
 	Db db; // sqly
 
@@ -23,19 +24,19 @@ public:
 	{
 		ID_QUIT=FXMainWindow::ID_LAST,
 		ID_SIGNIN,
-		ID_SIGNOUT
+		ID_SIGNOUT,
+		ID_DIALOG
 	};
+
+	// FOX-1.6 callbacks
 	long quit(FXObject*,FXSelector,void*);
 	long signin(FXObject*,FXSelector,void*);
 	long signout(FXObject*,FXSelector,void*);
+	long dialog(FXObject*,FXSelector,void*);
+
 	void create();
 	mywin(FXApp*a);
-	~mywin()
-	{
-		delete buttonQuit;
-		delete buttonSignin;
-		delete buttonSignout;
-	}
+	~mywin();
 };
 
 
@@ -45,7 +46,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_CLOSE,0,mywin::quit),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUIT,mywin::quit),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNIN,mywin::signin),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNOUT,mywin::signout)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNOUT,mywin::signout),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_DIALOG,mywin::dialog)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -56,10 +58,13 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Set up GUI stuff -----
 
 	// Menu bar
+	dialogBox=new FXFileDialog(this,"Open");
+	dialogBox->resize(320,190);
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
 	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
+	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_DIALOG);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
@@ -74,6 +79,15 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	resize(640,480);
 }
 
+mywin::~mywin()
+{
+	delete buttonQuit;
+	delete buttonSignin;
+	delete buttonSignout;
+	delete menubar;
+	delete mpFile;
+	delete dialogBox;
+}
 // Create window
 void mywin::create()
 {
@@ -101,5 +115,13 @@ long mywin::signin(FXObject*,FXSelector,void*)
 long mywin::signout(FXObject*,FXSelector,void*)
 {
 	puts("This gem (I mean SIGNOUT function) is a placeholder.");
+	return 1;
+}
+
+long mywin::dialog(FXObject*,FXSelector,void*)
+{
+	puts("open dialog");
+	dialogBox->show(PLACEMENT_SCREEN);
+	//delete m;
 	return 1;
 }
