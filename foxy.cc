@@ -59,7 +59,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
-	new FXMenuCommand(mpFile,"&Quit",NULL,getApp(),getApp()->ID_QUIT);
+	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
