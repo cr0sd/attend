@@ -8,12 +8,14 @@
 class mywin : public FXMainWindow
 {
 	FXDECLARE(mywin)
-	FXButton	*buttonQuit;
-	FXButton	*buttonSignin;
-	FXButton	*buttonSignout;
-	FXMenuBar	*menubar;
-	FXMenuPane	*mpFile;
-	FXFileDialog *dialogBox;
+	FXButton		*buttonQuit;
+	FXButton		*buttonSignin;
+	FXButton		*buttonSignout;
+	FXMenuBar		*menubar;
+	FXMenuPane		*mpFile;
+	FXFileDialog	*dialogBox;
+	FXChoiceBox		*choice;
+	FXList			*list;
 
 	Db db; // sqly
 
@@ -60,6 +62,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Menu bar
 	dialogBox=new FXFileDialog(this,"Open");
 	dialogBox->resize(320,190);
+	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo");
+	choice->resize(320,190);
+	
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
@@ -72,11 +77,35 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 
 	// Table
-	FXList*t=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|LIST_SINGLESELECT);
-	t->appendItem("Name of person");
-	t->appendItem("Name of other person");
+	list=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|LIST_SINGLESELECT|FRAME_THICK);
+	list->appendItem("John Smith");
+	list->appendItem("Sam Adams");
+	list->appendItem("Joe Schmoe");
+	list->appendItem("Harold Borg");
+	list->appendItem("Norm Andersson");
+	list->appendItem("Sarah Peters");
+	list->appendItem("Joe Schmoe");
+	list->appendItem("Jane Jingleheimerschmidt");
+	list->appendItem("Andrew Roberts");
+	list->appendItem("Bob Roberts");
+	list->appendItem("Norm Andersson");
+	list->appendItem("Frank Franks");
+	list->appendItem("Sam Adams");
+	list->appendItem("Sarah Peters");
+	list->appendItem("Joe Schmoe");
+	list->appendItem("Sam Adams");
+	list->appendItem("Paul Garrison");
+	list->appendItem("Harold Borg");
+	list->appendItem("Phil Juares");
+	list->appendItem("Pat Patterson");
+	list->appendItem("Joe Jibbers");
+
+	list->selectItem(0);
 
 	resize(640,480);
+
+	Db db;
+	db.open("data.db");
 }
 
 mywin::~mywin()
@@ -108,6 +137,12 @@ long mywin::quit(FXObject*sender,FXSelector s,void*)
 long mywin::signin(FXObject*,FXSelector,void*)
 {
 	puts("This gem (I mean SIGNIN function) is a placeholder.");
+	static FXString msg;
+	msg="";
+	msg+="Are you sure you want to sign in as:\n";
+	msg+=list->getItemText(list->getCurrentItem()).text();
+	msg+="?";
+	choice->ask(this,0,"Prompt",msg,NULL,"Yes\nNo");
 	return 1;
 }
 
@@ -115,6 +150,13 @@ long mywin::signin(FXObject*,FXSelector,void*)
 long mywin::signout(FXObject*,FXSelector,void*)
 {
 	puts("This gem (I mean SIGNOUT function) is a placeholder.");
+	static FXString msg;
+	msg="";
+	msg+="Are you sure you want to sign out as:\n";
+	msg+=list->getItemText(list->getCurrentItem()).text();
+	msg+="?";
+	puts("This gem (I mean SIGNIN function) is a placeholder.");
+	choice->ask(this,0,"Prompt",msg,NULL,"Yes\nNo");
 	return 1;
 }
 
