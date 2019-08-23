@@ -20,6 +20,8 @@ public:
 	void insertSignIn(const char*name);
 	void insertSignOut(const char*name);
 	void selectAllWhereName(const char*name);
+	void selectAllTardies(const char*sqlTime);
+	void selectAllLeaveEarlies(const char*sqlTime);
 	void selectAll();
 };
 
@@ -38,18 +40,12 @@ void Db::open(const char*dbfname)
 
 
 // Global SQLITE3 callback
-int sqlite3_print_row(void* data_file,int argc,char**argv,char** /*columns*/)
+int sqlite3_print_row(void* data_file,int argc,char**argv,char**)
 {
-	//FILE*f=fopen("file.csv","w+");
-	if(!data_file)
-	{
-		puts("error:couldn't open CSV file!");
-		return 0;
-	}
+	//for(int i=0;cols[i];++i) fprintf((FILE*)data_file,"%s,\t",cols[i]);
 	for(int i=0;i<argc;++i)
 		fprintf((FILE*)data_file,"%s,\t",argv[i]);
 	fputs("\n",(FILE*)data_file);
-	//fclose(f);
 	return 0;
 }
 
@@ -105,6 +101,7 @@ void Db::outputCsv(const char*sql,const char*fname)
 	printf("SQL statement:\n%s\n",sql);
 	char*errmsg=NULL;
 	FILE*f=fopen(fname,"w+");
+	if(!f){puts("error:couldn't open file");return;}
 	sqlite3_exec(db,sql,sqlite3_print_row,f,&errmsg);
 	fclose(f);
 	if(errmsg) puts(errmsg);
@@ -113,12 +110,31 @@ void Db::outputCsv(const char*sql,const char*fname)
 
 void Db::selectAll()
 {
-	outputCsv("SELECT * FROM attendance;","file.csv");
+	outputCsv("SELECT * FROM attendance ORDER BY name;","file.csv");
 }
 
 void Db::selectAllWhereName(const char*name)
 {
 	char sql[512];
 	sprintf(sql,"SELECT * FROM attendance WHERE name='%s';\n",name);
+	outputCsv(sql,"file.csv");
+}
+
+void Db::selectAllTardies(const char*sqlTime)
+{
+	puts("selectAllTardies");
+	char sql[512];
+	sprintf(sql,"SELECT name,count(*) FROM attendance WHERE time>time('%s') AND type='SIGNIN' GROUP BY name ORDER BY name;",sqlTime);
+	outputCsv(sql,"file.csv");
+}
+
+void Db::selectAllLeaveEarlies(const char*sqlTime)
+{
+	puts("selectAllLeaveEarlies: Needs to be implemented");
+	char sql[512];
+	sprintf(sql,"SELECT name,count(*),AVG('%s'-time) FROM attendance "
+				"WHERE time<time('%s') AND type='SIGNOUT' "
+				"GROUP BY name ORDER BY name;",
+				sqlTime,sqlTime);
 	outputCsv(sql,"file.csv");
 }

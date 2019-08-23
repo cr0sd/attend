@@ -1,6 +1,7 @@
 #pragma once
 #include<fox-1.6/fx.h>
 #include"sqly.cc"
+#include<time.h>
 
 FXint listSort(FXListItem*a,FXListItem*b);
 
@@ -30,7 +31,9 @@ public:
 		ID_SIGNOUT,
 		ID_OPEN,
 		ID_QUERY,
-		ID_QUERYWHERENAME
+		ID_QUERYWHERENAME,
+		ID_QUERYTARDIES,
+		ID_QUERYLEAVES
 	};
 
 	// FOX-1.6 callbacks
@@ -41,7 +44,9 @@ public:
 	long signout(FXObject*,FXSelector,void*);
 	long dialog(FXObject*,FXSelector,void*);
 	long queryAll(FXObject*,FXSelector,void*);
-	long queryAllWhereName(FXObject*,FXSelector,void*);
+	long queryAllByName(FXObject*,FXSelector,void*);
+	long queryAllTardies(FXObject*,FXSelector,void*);
+	long queryAllLeaveEarlies(FXObject*,FXSelector,void*);
 
 	void create();
 	mywin(FXApp*a);
@@ -58,7 +63,9 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNOUT,mywin::signout),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_OPEN,mywin::dialog),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERY,mywin::queryAll),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYWHERENAME,mywin::queryAllWhereName)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYWHERENAME,mywin::queryAllByName),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYTARDIES,mywin::queryAllTardies),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -91,7 +98,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
 	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
 	new FXMenuCommand(mpFile,"&Query",NULL,this,mywin::ID_QUERY);
-	new FXMenuCommand(mpFile,"&QueryWhereName",NULL,this,mywin::ID_QUERYWHERENAME);
+	new FXMenuCommand(mpFile,"&QueryByName",NULL,this,mywin::ID_QUERYWHERENAME);
+	new FXMenuCommand(mpFile,"&QueryTardies",NULL,this,mywin::ID_QUERYTARDIES);
+	new FXMenuCommand(mpFile,"&QueryLeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
@@ -222,19 +231,56 @@ long mywin::queryAll(FXObject*,FXSelector,void*)
 	return 1;
 }
 
-// queryAllWhereName dialog
-long mywin::queryAllWhereName(FXObject*,FXSelector,void*)
+// queryAllByName dialog
+long mywin::queryAllByName(FXObject*,FXSelector,void*)
 {
 	static char name[512];
 	strcpy(name,list->getItemText(list->getCurrentItem()).text());
 
-	printf("queryAllWhereName('%s')\n",name);
+	printf("queryAllByName('%s')\n",name);
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
 	db.selectAllWhereName(name);
 
 	progress->setProgress(100);
+	progress->hide();
+	return 1;
+}
+
+// queryAllTardies dialog
+long mywin::queryAllTardies(FXObject*,FXSelector,void*)
+{
+	static char sqlTime[512];
+	//time_t t=time(0);
+	//strftime(sqlTime,512,"%F %T",localtime(&t));
+	strcpy(sqlTime,"08:45:00");
+	sprintf(sqlTime,"%s",sqlTime);
+
+	printf("queryAllTardies('%s')\n",sqlTime);
+
+	progress->setProgress(0);
+	progress->show(PLACEMENT_SCREEN);
+	db.selectAllTardies(sqlTime);
+
+	progress->setProgress(100);
+	progress->hide();
+	return 1;
+}
+
+// queryAllLeaveEarlies dialog
+long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
+{
+	static char sqlTime[512];
+	strcpy(sqlTime,"14:25:00");
+	sprintf(sqlTime,"%s",sqlTime);
+
+	printf("queryAllLeaveEarlies('%s')\n",sqlTime);
+
+	progress->setProgress(0);
+	progress->show(PLACEMENT_SCREEN);
+	db.selectAllLeaveEarlies(sqlTime);
+
 	progress->hide();
 	return 1;
 }
