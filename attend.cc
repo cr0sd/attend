@@ -1,4 +1,4 @@
-#include<fx.h>
+#include<fox-1.6/fx.h>
 #include<sqlite3.h>
 
 #include"foxy.cc"

@@ -1,7 +1,5 @@
 #pragma once
 #include<fx.h>
-#include<sqlite3.h>
-
 #include"sqly.cc"
 
 FXint listSort(FXListItem*a,FXListItem*b);
@@ -31,7 +29,8 @@ public:
 		ID_SIGNIN,
 		ID_SIGNOUT,
 		ID_OPEN,
-		ID_QUERY
+		ID_QUERY,
+		ID_QUERYWHERENAME
 	};
 
 	// FOX-1.6 callbacks
@@ -41,7 +40,8 @@ public:
 	long signin(FXObject*,FXSelector,void*);
 	long signout(FXObject*,FXSelector,void*);
 	long dialog(FXObject*,FXSelector,void*);
-	long query(FXObject*,FXSelector,void*);
+	long queryAll(FXObject*,FXSelector,void*);
+	long queryAllWhereName(FXObject*,FXSelector,void*);
 
 	void create();
 	mywin(FXApp*a);
@@ -57,7 +57,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNIN,mywin::signin),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNOUT,mywin::signout),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_OPEN,mywin::dialog),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERY,mywin::query)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERY,mywin::queryAll),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYWHERENAME,mywin::queryAllWhereName)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -84,6 +85,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
 	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
 	new FXMenuCommand(mpFile,"&Query",NULL,this,mywin::ID_QUERY);
+	new FXMenuCommand(mpFile,"&QueryWhereName",NULL,this,mywin::ID_QUERYWHERENAME);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
@@ -199,10 +201,10 @@ long mywin::dialog(FXObject*,FXSelector,void*)
 	return 1;
 }
 
-// Query dialog
-long mywin::query(FXObject*,FXSelector,void*)
+// queryAll dialog
+long mywin::queryAll(FXObject*,FXSelector,void*)
 {
-	puts("query");
+	puts("queryAll");
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
@@ -211,21 +213,23 @@ long mywin::query(FXObject*,FXSelector,void*)
 	progress->setProgress(100);
 	progress->hide();
 	return 1;
+}
 
+// queryAllWhereName dialog
+long mywin::queryAllWhereName(FXObject*,FXSelector,void*)
+{
+	static char name[512];
+	strcpy(name,list->getItemText(list->getCurrentItem()).text());
 
-	//static char fn[512];
-	//tmpnam(fn);
-	//FILE*f=fopen(fn,"w+");
-	//printf("opening '%s' to store query...\n",fn);
-	//if(!f)
-	//{
-		//puts("error:couldn't open temporary file");
-		//return 1;
-	//}
-//
-	//puts("created a file, dude");
-	//fclose(f);
-	//return 1;
+	printf("queryAllWhereName('%s')\n",name);
+
+	progress->setProgress(0);
+	progress->show(PLACEMENT_SCREEN);
+	db.selectAllWhereName(name);
+
+	progress->setProgress(100);
+	progress->hide();
+	return 1;
 }
 
 // Global listSort function

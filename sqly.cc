@@ -1,6 +1,5 @@
 #pragma once
 #include<sqlite3.h>
-#include<stdio.h>
 #include<assert.h>
 
 class Db
@@ -16,10 +15,11 @@ public:
 	void createTable();				// Use schema: id,name,date,time,type
 
 	// SQL queries, inserts, updates, deletions
-	void readExecSqlFile(const char*fname); // Use custom SQL script
+	void outputCsv(const char*sql,const char*fname);	// Base function for other queries
+	void readExecSqlFile(const char*fname);				// Use custom SQL script
 	void insertSignIn(const char*name);
 	void insertSignOut(const char*name);
-	void selectWhereName(const char*name);
+	void selectAllWhereName(const char*name);
 	void selectAll();
 };
 
@@ -99,13 +99,25 @@ void Db::readExecSqlFile(const char*fname)
 	fclose(f);
 }
 
-void Db::selectAll()
+void Db::outputCsv(const char*sql,const char*fname)
 {
 	assert(this->db!=NULL);
+	printf("SQL statement:\n%s\n",sql);
 	char*errmsg=NULL;
-	FILE*f=fopen("file.csv","w+");
-	sqlite3_exec(db,"SELECT * FROM attendance;",sqlite3_print_row,f,&errmsg);
+	FILE*f=fopen(fname,"w+");
+	sqlite3_exec(db,sql,sqlite3_print_row,f,&errmsg);
 	fclose(f);
-	if(errmsg)
-		puts(errmsg);
+	if(errmsg) puts(errmsg);
+}
+
+void Db::selectAll()
+{
+	outputCsv("SELECT * FROM attendance;","file.csv");
+}
+
+void Db::selectAllWhereName(const char*name)
+{
+	char sql[512];
+	sprintf(sql,"SELECT * FROM attendance WHERE name='%s';\n",name);
+	outputCsv(sql,"file.csv");
 }
