@@ -69,7 +69,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Menu bar
 	dialogBox=new FXFileDialog(this,"Open");
 	dialogBox->resize(320,190);
-	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo");
+	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo",LIST_BROWSESELECT);
 	choice->resize(320,190);
 	
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
@@ -85,7 +85,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 
 	// Table
-	list=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|LIST_SINGLESELECT|FRAME_THICK);
+	list=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|LIST_BROWSESELECT);
 	list->appendItem("John Smith");
 	list->appendItem("Sam Adams");
 	list->appendItem("Joe Schmoe");
@@ -110,6 +110,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	list->setSortFunc((FXListSortFunc)listSort);
 	list->sortItems();
+	list->setCurrentItem(0);
 	list->selectItem(0); // So that the user knows who is SIGNed IN or OUT
 
 	resize(640,480);
@@ -149,9 +150,10 @@ long mywin::signin(FXObject*,FXSelector,void*)
 {
 	puts("This gem (I mean SIGNIN function) is a placeholder.");
 	static FXString msg;
+	const char*name=list->getItemText(list->getCurrentItem()).text();
 	msg="";
 	msg+="Are you sure you want to sign in as:\n";
-	msg+=list->getItemText(list->getCurrentItem()).text();
+	msg+=name;
 	msg+="?";
 	choice->ask(this,0,"SIGN IN",msg,NULL,"Yes\nNo");
 	return 1;
@@ -166,7 +168,6 @@ long mywin::signout(FXObject*,FXSelector,void*)
 	msg+="Are you sure you want to sign out as:\n";
 	msg+=list->getItemText(list->getCurrentItem()).text();
 	msg+="?";
-	puts("This gem (I mean SIGNIN function) is a placeholder.");
 	choice->ask(this,0,"SIGN OUT",msg,NULL,"Yes\nNo");
 	return 1;
 }
@@ -199,7 +200,7 @@ long mywin::query(FXObject*,FXSelector,void*)
 	return 1;
 }
 
-// ListSort function
+// Global listSort function
 FXint listSort(FXListItem*a,FXListItem*b)
 {
 	return a->getText()[0]-b->getText()[0];

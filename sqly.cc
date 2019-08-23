@@ -13,8 +13,8 @@ public:
 
 	// SQL queries, inserts, updates, deletions
 	void readExecSqlFile(const char*fname); // Use custom SQL script
-	void insertSignIn(const char*name,time_t date,time_t time);
-	void insertSignout(const char*name,time_t date,time_t time);
+	void insertSignIn(const char*name);
+	void insertSignout(const char*name);
 	char*selectWhereName(const char*name);
 	char*selectAll();
 };
@@ -27,6 +27,15 @@ void Db::open(const char*dbfname)
 		printf("error:can't open database '%s'\n",dbfname);
 		return;
 	}
+}
+
+void Db::insertSignIn(const char*name)
+{
+	char sql[512];
+	printf(sql,	"insert into attendance"
+				"(name,date,time,type)"
+				"values(%s,date('now','localtime'),"
+				"time('now','localtime'))",name);
 }
 
 void Db::readExecSqlFile(const char*fname)
