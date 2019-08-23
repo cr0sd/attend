@@ -10,14 +10,15 @@ FXint listSort(FXListItem*a,FXListItem*b);
 class mywin : public FXMainWindow
 {
 	FXDECLARE(mywin)
-	FXButton		*buttonQuit;
-	FXButton		*buttonSignin;
-	FXButton		*buttonSignout;
-	FXMenuBar		*menubar;
-	FXMenuPane		*mpFile;
-	FXFileDialog	*dialogBox;
-	FXChoiceBox		*choice;
-	FXList			*list;
+	FXButton			*buttonQuit;
+	FXButton			*buttonSignin;
+	FXButton			*buttonSignout;
+	FXMenuBar			*menubar;
+	FXMenuPane			*mpFile;
+	FXFileDialog		*dialogBox;
+	FXProgressDialog	*progress;
+	FXChoiceBox			*choice;
+	FXList				*list;
 
 	Db db; // sqly
 
@@ -67,6 +68,11 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Set up GUI stuff -----
 
 	// Menu bar
+	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
+	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
+	progress->setTotal(100);
+	progress->setProgress(0);
+
 	dialogBox=new FXFileDialog(this,"Open");
 	dialogBox->resize(320,190);
 	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo",LIST_BROWSESELECT);
@@ -115,7 +121,6 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	resize(640,480);
 
-	Db db;
 	db.open("data.db");
 }
 
@@ -127,6 +132,7 @@ mywin::~mywin()
 	delete menubar;
 	delete mpFile;
 	delete dialogBox;
+	delete progress;
 }
 
 // Create window
@@ -137,10 +143,9 @@ void mywin::create()
 }
 
 // Quit GUI
-long mywin::quit(FXObject*sender,FXSelector s,void*)
+long mywin::quit(FXObject*,FXSelector,void*)
 {
-	puts("Can we finally exit the program now?");
-	sender->handle(this,s,NULL);
+	puts("Exiting...");
 	getApp()->exit(1);
 	return 1;
 }
@@ -148,27 +153,40 @@ long mywin::quit(FXObject*sender,FXSelector s,void*)
 // Sign in button callback
 long mywin::signin(FXObject*,FXSelector,void*)
 {
-	puts("This gem (I mean SIGNIN function) is a placeholder.");
 	static FXString msg;
-	const char*name=list->getItemText(list->getCurrentItem()).text();
+	static char name[512];
+	strcpy(name,list->getItemText(list->getCurrentItem()).text());
+
+	// Create prompt message
 	msg="";
 	msg+="Are you sure you want to sign in as:\n";
 	msg+=name;
 	msg+="?";
-	choice->ask(this,0,"SIGN IN",msg,NULL,"Yes\nNo");
+
+	int res=choice->ask(this,0,"SIGN IN",msg,NULL,"Yes\nNo");
+	if(res==0) /*Yes => 0, No => 1*/
+		db.insertSignIn((const char*)name);
+
 	return 1;
 }
 
 // Sign out button callback
 long mywin::signout(FXObject*,FXSelector,void*)
 {
-	puts("This gem (I mean SIGNOUT function) is a placeholder.");
 	static FXString msg;
+	static char name[512];
+	strcpy(name,list->getItemText(list->getCurrentItem()).text());
+
+	// Create prompt message
 	msg="";
 	msg+="Are you sure you want to sign out as:\n";
-	msg+=list->getItemText(list->getCurrentItem()).text();
+	msg+=name;
 	msg+="?";
-	choice->ask(this,0,"SIGN OUT",msg,NULL,"Yes\nNo");
+
+	int res=choice->ask(this,0,"SIGN OUT",msg,NULL,"Yes\nNo");
+	if(res==0) /*Yes => 0, No => 1*/
+		db.insertSignOut((const char*)name);
+
 	return 1;
 }
 
@@ -185,19 +203,29 @@ long mywin::dialog(FXObject*,FXSelector,void*)
 long mywin::query(FXObject*,FXSelector,void*)
 {
 	puts("query");
-	static char fn[512];
-	tmpnam(fn);
-	FILE*f=fopen(fn,"w+");
-	printf("opening '%s' to store query...\n",fn);
-	if(!f)
-	{
-		puts("error:couldn't open temporary file");
-		return 1;
-	}
 
-	puts("created a file, dude");
-	fclose(f);
+	progress->setProgress(0);
+	progress->show(PLACEMENT_SCREEN);
+	db.selectAll();
+
+	progress->setProgress(100);
+	progress->hide();
 	return 1;
+
+
+	//static char fn[512];
+	//tmpnam(fn);
+	//FILE*f=fopen(fn,"w+");
+	//printf("opening '%s' to store query...\n",fn);
+	//if(!f)
+	//{
+		//puts("error:couldn't open temporary file");
+		//return 1;
+	//}
+//
+	//puts("created a file, dude");
+	//fclose(f);
+	//return 1;
 }
 
 // Global listSort function
