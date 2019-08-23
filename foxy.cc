@@ -80,6 +80,8 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	dialogBox=new FXFileDialog(this,"Open");
 	dialogBox->resize(320,190);
+	dialogBox->allowPatternEntry(false);
+	dialogBox->setPatternList("SQLite3 Database (*.db)\nAll Files (*)");
 	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo",LIST_BROWSESELECT);
 	choice->resize(320,190);
 	
@@ -200,8 +202,9 @@ long mywin::signout(FXObject*,FXSelector,void*)
 long mywin::dialog(FXObject*,FXSelector,void*)
 {
 	puts("open dialog");
-	dialogBox->show(PLACEMENT_SCREEN);
-	//delete m;
+	FXuint res=dialogBox->execute(PLACEMENT_SCREEN);
+	
+	printf("close dialog: '%s'\n",res?(dialogBox->getFilename().text()):"<none>");
 	return 1;
 }
 
