@@ -14,10 +14,13 @@ class mywin : public FXMainWindow
 	FXButton			*buttonSignout;
 	FXMenuBar			*menubar;
 	FXMenuPane			*mpFile;
+	FXMenuPane			*mpSearch;
 	FXFileDialog		*dialogBox;
 	FXProgressDialog	*progress;
 	FXChoiceBox			*choice;
 	FXList				*list;
+	FXDialogBox			*tabWin;
+	FXTable				*tabWinTable;
 
 	Db db; // sqly
 
@@ -76,9 +79,17 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Set up GUI stuff -----
 
 	// Menu bar
-	FXColor pix[1]={0xffffff};
+	FXColor pix[2]={0xffffff,0xffffff};
 	FXIcon *ico=new FXIcon(getApp(),pix);
 	setIcon(ico);
+
+	// Set FXTopWindow (dialog boxes)
+	tabWin=new FXDialogBox(this,"Table Viewer",DECOR_ALL,0,0,480,480);
+	tabWin->setIcon(ico);
+	tabWinTable=new FXTable(tabWin,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	tabWinTable->insertColumns(0,6);
+	tabWinTable->insertRows(0,30);
+	tabWinTable->setItemText(1,2,"<text>");
 
 	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
 	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
@@ -91,23 +102,28 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	dialogBox->setPatternList("SQLite3 Database (*.db)\nAll Files (*)");
 	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo",LIST_BROWSESELECT);
 	choice->resize(320,190);
-	
+
+	// MenuBar
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
+	mpSearch=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
-	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
+	new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
+
+	new FXMenuCommand(mpSearch,"Q&uery",NULL,this,mywin::ID_QUERY);
+	new FXMenuCommand(mpSearch,"QueryBy&Name",NULL,this,mywin::ID_QUERYWHERENAME);
+	new FXMenuCommand(mpSearch,"Query&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
+	new FXMenuCommand(mpSearch,"Query&LeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
+
 	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
-	new FXMenuCommand(mpFile,"&Query",NULL,this,mywin::ID_QUERY);
-	new FXMenuCommand(mpFile,"&QueryByName",NULL,this,mywin::ID_QUERYWHERENAME);
-	new FXMenuCommand(mpFile,"&QueryTardies",NULL,this,mywin::ID_QUERYTARDIES);
-	new FXMenuCommand(mpFile,"&QueryLeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
+	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignin=new FXButton (this,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 
-	// Table
+	// List of students
 	list=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|LIST_BROWSESELECT);
 	list->appendItem("John Smith");
 	list->appendItem("Sam Adams");
@@ -131,6 +147,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	list->appendItem("Pat Patterson");
 	list->appendItem("Joe Jibbers");
 
+	//Sort table, set selection to first
 	list->setSortFunc((FXListSortFunc)listSort);
 	list->sortItems();
 	list->setCurrentItem(0);
@@ -150,6 +167,10 @@ mywin::~mywin()
 	delete mpFile;
 	delete dialogBox;
 	delete progress;
+	delete choice;
+	delete list;
+	delete tabWin;
+	//delete tabWinTable;
 }
 
 // Create window
@@ -157,6 +178,7 @@ void mywin::create()
 {
 	FXMainWindow::create();
 	show(PLACEMENT_SCREEN);
+	tabWin->execute();
 }
 
 // Quit GUI
@@ -255,7 +277,7 @@ long mywin::queryAllTardies(FXObject*,FXSelector,void*)
 	//time_t t=time(0);
 	//strftime(sqlTime,512,"%F %T",localtime(&t));
 	strcpy(sqlTime,"08:45:00");
-	sprintf(sqlTime,"%s",sqlTime);
+	//sprintf(sqlTime,"%s",sqlTime);
 
 	printf("queryAllTardies('%s')\n",sqlTime);
 
@@ -273,7 +295,7 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 {
 	static char sqlTime[512];
 	strcpy(sqlTime,"14:25:00");
-	sprintf(sqlTime,"%s",sqlTime);
+	//sprintf(sqlTime,"%s",sqlTime);
 
 	printf("queryAllLeaveEarlies('%s')\n",sqlTime);
 
