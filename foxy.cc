@@ -178,7 +178,7 @@ void mywin::create()
 {
 	FXMainWindow::create();
 	show(PLACEMENT_SCREEN);
-	tabWin->execute();
+	//tabWin->execute();
 }
 
 // Quit GUI
