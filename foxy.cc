@@ -4,6 +4,8 @@
 
 #include"sqly.cc"
 
+FXint listSort(FXListItem*a,FXListItem*b);
+
 // define mywin class
 class mywin : public FXMainWindow
 {
@@ -27,14 +29,18 @@ public:
 		ID_QUIT=FXMainWindow::ID_LAST,
 		ID_SIGNIN,
 		ID_SIGNOUT,
-		ID_DIALOG
+		ID_OPEN,
+		ID_QUERY
 	};
 
 	// FOX-1.6 callbacks
+	// (Which may or may not interface
+	// with SQL ;) )
 	long quit(FXObject*,FXSelector,void*);
 	long signin(FXObject*,FXSelector,void*);
 	long signout(FXObject*,FXSelector,void*);
 	long dialog(FXObject*,FXSelector,void*);
+	long query(FXObject*,FXSelector,void*);
 
 	void create();
 	mywin(FXApp*a);
@@ -49,7 +55,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUIT,mywin::quit),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNIN,mywin::signin),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SIGNOUT,mywin::signout),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_DIALOG,mywin::dialog)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_OPEN,mywin::dialog),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERY,mywin::query)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -69,7 +76,8 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	mpFile=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
 	new FXMenuCommand(mpFile,"&Quit",NULL,this,mywin::ID_QUIT);
-	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_DIALOG);
+	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
+	new FXMenuCommand(mpFile,"&Query",NULL,this,mywin::ID_QUERY);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
@@ -100,7 +108,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	list->appendItem("Pat Patterson");
 	list->appendItem("Joe Jibbers");
 
-	list->selectItem(0);
+	list->setSortFunc((FXListSortFunc)listSort);
+	list->sortItems();
+	list->selectItem(0); // So that the user knows who is SIGNed IN or OUT
 
 	resize(640,480);
 
@@ -117,6 +127,7 @@ mywin::~mywin()
 	delete mpFile;
 	delete dialogBox;
 }
+
 // Create window
 void mywin::create()
 {
@@ -142,7 +153,7 @@ long mywin::signin(FXObject*,FXSelector,void*)
 	msg+="Are you sure you want to sign in as:\n";
 	msg+=list->getItemText(list->getCurrentItem()).text();
 	msg+="?";
-	choice->ask(this,0,"Prompt",msg,NULL,"Yes\nNo");
+	choice->ask(this,0,"SIGN IN",msg,NULL,"Yes\nNo");
 	return 1;
 }
 
@@ -156,14 +167,40 @@ long mywin::signout(FXObject*,FXSelector,void*)
 	msg+=list->getItemText(list->getCurrentItem()).text();
 	msg+="?";
 	puts("This gem (I mean SIGNIN function) is a placeholder.");
-	choice->ask(this,0,"Prompt",msg,NULL,"Yes\nNo");
+	choice->ask(this,0,"SIGN OUT",msg,NULL,"Yes\nNo");
 	return 1;
 }
 
+// Open file dialog
 long mywin::dialog(FXObject*,FXSelector,void*)
 {
 	puts("open dialog");
 	dialogBox->show(PLACEMENT_SCREEN);
 	//delete m;
 	return 1;
+}
+
+// Query dialog
+long mywin::query(FXObject*,FXSelector,void*)
+{
+	puts("query");
+	static char fn[512];
+	tmpnam(fn);
+	FILE*f=fopen(fn,"w+");
+	printf("opening '%s' to store query...\n",fn);
+	if(!f)
+	{
+		puts("error:couldn't open temporary file");
+		return 1;
+	}
+
+	puts("created a file, dude");
+	fclose(f);
+	return 1;
+}
+
+// ListSort function
+FXint listSort(FXListItem*a,FXListItem*b)
+{
+	return a->getText()[0]-b->getText()[0];
 }
