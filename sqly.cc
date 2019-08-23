@@ -108,6 +108,7 @@ void Db::outputCsv(const char*sql,const char*fname)
 	sqlite3_exec(db,sql,sqlite3_print_row,f,&errmsg);
 	fclose(f);
 	if(errmsg) puts(errmsg);
+	system("start file.csv");
 }
 
 void Db::selectAll()

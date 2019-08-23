@@ -8,7 +8,7 @@ RM=@rm -f
 # determine OS
 ifeq ($(OS),Windows_NT)
 
-INCDIR=C:\msys2\mingw64\include\fox-1.6
+INCDIR=/mingw64/include/fox-1.6
 
 else
 

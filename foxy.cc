@@ -1,5 +1,5 @@
 #pragma once
-#include<fx.h>
+#include<fox-1.6/fx.h>
 #include"sqly.cc"
 
 FXint listSort(FXListItem*a,FXListItem*b);
@@ -69,6 +69,10 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Set up GUI stuff -----
 
 	// Menu bar
+	FXColor pix[1]={0xffffff};
+	FXIcon *ico=new FXIcon(getApp(),pix);
+	setIcon(ico);
+
 	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
 	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
 	progress->setTotal(100);
