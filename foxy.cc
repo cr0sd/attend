@@ -1,6 +1,7 @@
 #pragma once
 #include<fox-1.6/fx.h>
 #include"sqly.cc"
+#include"dir.cc"
 #include<time.h>
 
 FXint listSort(FXListItem*a,FXListItem*b);
@@ -56,7 +57,6 @@ public:
 	~mywin();
 };
 
-
 // implement mywin class
 FXDEFMAP(mywin) mywinMap[]=
 {
@@ -76,6 +76,11 @@ FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
 // mywin  CLASS CONSTRUCTOR!!
 mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 {
+
+	Dir dir;
+	puts(dir.dir_wd);
+	puts(dir.dir_data);
+
 	// Set up GUI stuff -----
 
 	// Menu bar
