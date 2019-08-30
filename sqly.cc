@@ -107,7 +107,7 @@ void Db::outputCsv(const char*sql,const char*fname)
 	assert(this->db!=NULL);
 	printf("SQL statement:\n%s\n",sql);
 	char*errmsg=NULL;
-	FILE*f=fopen(fname,"w+");
+	FILE*f=fopen(dir->getDataDir(fname),"w+");
 	if(!f){puts("error:couldn't open file");return;}
 	sqlite3_exec(db,sql,sqlite3_print_row,f,&errmsg);
 	fclose(f);
@@ -118,13 +118,13 @@ void Db::outputCsv(const char*sql,const char*fname)
 	char t[1024];
 	#ifdef AT_WINDOWS
 		strcpy(t,"start ");
-		strcat(t,dir->getDataDir("file.csv"));
+		strcat(t,dir->getDataDir(fname));
 		strcat(t," &");
 		printf("systemcall: '%s'\n",t);
 		system(t);
 	#else
 		strcpy(t,"gio open ");
-		strcat(t,dir->getDataDir("file.csv"));
+		strcat(t,dir->getDataDir(fname));
 		strcat(t," &");
 		printf("systemcall: '%s'\n",t);
 		system(t);

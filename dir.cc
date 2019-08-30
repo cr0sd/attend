@@ -67,7 +67,7 @@ Dir::Dir()
 	// Create dir_data
 	t=(char*)malloc(1024);
 #ifdef AT_WINDOWS
-	i=sprintf(t,"%s",getenv("USERPROFILE"));
+	i=sprintf(t,"%s",getenv("APPDATA"));
 	sprintf(t+i,"\\%s",PROGNAME);
 	dir_data=t;
 #else
