@@ -4,7 +4,7 @@
 #include<stdio.h>
 #define PROGNAME "Attend"
 
-#define AT_WINDOWS
+//#define AT_WINDOWS
 
 class Dir
 {
@@ -13,7 +13,41 @@ public:
 	char *dir_data;		// Data Directory
 	Dir();
 	~Dir();
+	char *getWd(const char *append);
+	char *getDataDir(const char *append);
 };
+
+char *Dir::getDataDir(const char *append=NULL)
+{
+	static char t[1024];
+	strcpy(t,dir_data);
+	if(append)
+	{
+		#ifdef AT_WINDOWS
+			strcat(t,"\\");
+		#else
+			strcat(t,"/");
+		#endif
+			strcat(t,append);
+	}
+	return t;
+}
+
+char *Dir::getWd(const char *append=NULL)
+{
+	static char t[1024];
+	strcpy(t,dir_wd);
+	if(append)
+	{
+		#ifdef AT_WINDOWS
+			strcat(t,"\\");
+		#else
+			strcat(t,"/");
+		#endif
+			strcat(t,append);
+	}
+	return t;
+}
 
 Dir::Dir()
 {
@@ -26,7 +60,7 @@ Dir::Dir()
 	sprintf(t+i,"\\%s",PROGNAME);
 	dir_wd=t;
 #else
-	strcpy(t,"./");
+	strcpy(t,".");
 	dir_wd=t;
 #endif
 
@@ -37,7 +71,7 @@ Dir::Dir()
 	sprintf(t+i,"\\%s",PROGNAME);
 	dir_data=t;
 #else
-	strcpy(t,"./");
+	strcpy(t,".");
 	dir_data=t;
 #endif
 }

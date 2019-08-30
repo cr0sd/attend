@@ -23,7 +23,8 @@ class mywin : public FXMainWindow
 	FXDialogBox			*tabWin;
 	FXTable				*tabWinTable;
 
-	Db db; // sqly
+	Db *db;		// sqly.cc
+	Dir *dir;	// dir.cc
 
 	mywin(){}
 
@@ -77,9 +78,15 @@ FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
 mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 {
 
-	Dir dir;
-	puts(dir.dir_wd);
-	puts(dir.dir_data);
+	dir=new Dir;
+	db=new Db(dir);
+	puts(dir->getWd());
+	puts(dir->getDataDir());
+
+	puts(dir->getWd("config.ini"));
+	puts(dir->getDataDir("data.db"));
+
+	puts(dir->getDataDir("file.csv"));
 
 	// Set up GUI stuff -----
 
@@ -160,11 +167,16 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	resize(640,480);
 
-	db.open("data.db");
+	printf("opening '%s'...\n",dir->getDataDir("data.db"));
+	db->open(dir->getDataDir("data.db"));
 }
 
 mywin::~mywin()
 {
+	delete db;
+	delete dir;
+
+	// GUI
 	delete buttonQuit;
 	delete buttonSignin;
 	delete buttonSignout;
@@ -209,7 +221,7 @@ long mywin::signin(FXObject*,FXSelector,void*)
 
 	int res=choice->ask(this,0,"SIGN IN",msg,NULL,"Yes\nNo");
 	if(res==0) /*Yes => 0, No => 1*/
-		db.insertSignIn((const char*)name);
+		db->insertSignIn((const char*)name);
 
 	return 1;
 }
@@ -229,7 +241,7 @@ long mywin::signout(FXObject*,FXSelector,void*)
 
 	int res=choice->ask(this,0,"SIGN OUT",msg,NULL,"Yes\nNo");
 	if(res==0) /*Yes => 0, No => 1*/
-		db.insertSignOut((const char*)name);
+		db->insertSignOut((const char*)name);
 
 	return 1;
 }
@@ -251,7 +263,7 @@ long mywin::queryAll(FXObject*,FXSelector,void*)
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
-	db.selectAll();
+	db->selectAll();
 
 	progress->setProgress(100);
 	progress->hide();
@@ -268,7 +280,7 @@ long mywin::queryAllByName(FXObject*,FXSelector,void*)
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
-	db.selectAllWhereName(name);
+	db->selectAllWhereName(name);
 
 	progress->setProgress(100);
 	progress->hide();
@@ -288,7 +300,7 @@ long mywin::queryAllTardies(FXObject*,FXSelector,void*)
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
-	db.selectAllTardies(sqlTime);
+	db->selectAllTardies(sqlTime);
 
 	progress->setProgress(100);
 	progress->hide();
@@ -306,7 +318,7 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 
 	progress->setProgress(0);
 	progress->show(PLACEMENT_SCREEN);
-	db.selectAllLeaveEarlies(sqlTime);
+	db->selectAllLeaveEarlies(sqlTime);
 
 	progress->hide();
 	return 1;

@@ -1,14 +1,17 @@
 #pragma once
 #include<sqlite3.h>
 #include<assert.h>
+#include"dir.cc"
 
 class Db
 {
 	sqlite3*db;
 	//this db wants SCHEMA: id,name,date,time,type
+
+	Dir *dir;
 public:
 	// Database management
-	Db();
+	Db(Dir*);
 
 	void open(const char*dbfname);	// Open from dbfname (used at startup)
 	void save(const char*dbfname);	// Save to dbfname (used in a "save old, create new" scenario)
@@ -25,7 +28,11 @@ public:
 	void selectAll();
 };
 
-Db::Db(){db=NULL;}
+Db::Db(Dir *dir=NULL)
+{
+	db=NULL;
+	this->dir=dir;
+}
 
 void Db::open(const char*dbfname)
 {
@@ -105,7 +112,23 @@ void Db::outputCsv(const char*sql,const char*fname)
 	sqlite3_exec(db,sql,sqlite3_print_row,f,&errmsg);
 	fclose(f);
 	if(errmsg) puts(errmsg);
-	system("start file.csv &");
+
+
+	// Create, execute system call to open file in OS
+	char t[1024];
+	#ifdef AT_WINDOWS
+		strcpy(t,"start ");
+		strcat(t,dir->getDataDir("file.csv"));
+		strcat(t," &");
+		printf("systemcall: '%s'\n",t);
+		system(t);
+	#else
+		strcpy(t,"gio open ");
+		strcat(t,dir->getDataDir("file.csv"));
+		strcat(t," &");
+		printf("systemcall: '%s'\n",t);
+		system(t);
+	#endif
 }
 
 void Db::selectAll()
