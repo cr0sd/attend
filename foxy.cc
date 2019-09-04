@@ -2,6 +2,7 @@
 #include<fox-1.6/fx.h>
 #include"sqly.cc"
 #include"dir.cc"
+#include"st.cc"
 #include<time.h>
 
 FXint listSort(FXListItem*a,FXListItem*b);
@@ -15,6 +16,7 @@ class mywin : public FXMainWindow
 	FXButton			*buttonSignout;
 	FXMenuBar			*menubar;
 	FXMenuPane			*mpFile;
+	FXMenuPane			*mpEdit;
 	FXMenuPane			*mpSearch;
 	FXFileDialog		*dialogBox;
 	FXProgressDialog	*progress;
@@ -25,6 +27,7 @@ class mywin : public FXMainWindow
 
 	Db *db;		// sqly.cc
 	Dir *dir;	// dir.cc
+	St *st;	// st.cc
 
 	mywin(){}
 
@@ -38,7 +41,8 @@ public:
 		ID_QUERY,
 		ID_QUERYWHERENAME,
 		ID_QUERYTARDIES,
-		ID_QUERYLEAVES
+		ID_QUERYLEAVES,
+		ID_EDITSTUDENTS
 	};
 
 	// FOX-1.6 callbacks
@@ -52,6 +56,7 @@ public:
 	long queryAllByName(FXObject*,FXSelector,void*);
 	long queryAllTardies(FXObject*,FXSelector,void*);
 	long queryAllLeaveEarlies(FXObject*,FXSelector,void*);
+	long editStudents(FXObject*,FXSelector,void*);
 
 	void create();
 	mywin(FXApp*a);
@@ -69,7 +74,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERY,mywin::queryAll),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYWHERENAME,mywin::queryAllByName),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYTARDIES,mywin::queryAllTardies),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_EDITSTUDENTS,mywin::editStudents)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -80,6 +86,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	dir=new Dir;
 	db=new Db(dir);
+	st=new St[512];
 	puts(dir->getWd());
 	puts(dir->getDataDir());
 
@@ -96,12 +103,15 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	setIcon(ico);
 
 	// Set FXTopWindow (dialog boxes)
-	tabWin=new FXDialogBox(this,"Table Viewer",DECOR_ALL,0,0,480,480);
+	tabWin=new FXDialogBox(this,"Students",DECOR_ALL,0,0,480,480);
 	tabWin->setIcon(ico);
+	new FXButton(tabWin,"OK",0,tabWin,FXDialogBox::ID_ACCEPT,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
+	new FXButton(tabWin,"Cancel",0,tabWin,FXDialogBox::ID_CANCEL,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
 	tabWinTable=new FXTable(tabWin,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	tabWinTable->insertColumns(0,6);
+	tabWinTable->insertColumns(0,1);
 	tabWinTable->insertRows(0,30);
-	tabWinTable->setItemText(1,2,"<text>");
+	//tabWinTable->setItemText(1,2,"<text>");
+	tabWinTable->setColumnText(0,"Name");
 
 	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
 	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
@@ -118,17 +128,21 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// MenuBar
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
+	mpEdit=new FXMenuPane(this);
 	mpSearch=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
+	new FXMenuTitle(menubar,"&Edit",NULL,mpEdit);
 	new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
+
+	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
+	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
+
+	new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
 
 	new FXMenuCommand(mpSearch,"Q&uery",NULL,this,mywin::ID_QUERY);
 	new FXMenuCommand(mpSearch,"QueryBy&Name",NULL,this,mywin::ID_QUERYWHERENAME);
 	new FXMenuCommand(mpSearch,"Query&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
 	new FXMenuCommand(mpSearch,"Query&LeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
-
-	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
-	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
 
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
@@ -136,7 +150,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 
 	// List of students
-	list=new FXList(this,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|LIST_BROWSESELECT);
+	list=new FXList(this,NULL,0,
+		LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|LIST_BROWSESELECT);
+	
 	list->appendItem("John Smith");
 	list->appendItem("Sam Adams");
 	list->appendItem("Joe Schmoe");
@@ -175,6 +191,7 @@ mywin::~mywin()
 {
 	delete db;
 	delete dir;
+	delete[] st;
 
 	// GUI
 	delete buttonQuit;
@@ -182,6 +199,8 @@ mywin::~mywin()
 	delete buttonSignout;
 	delete menubar;
 	delete mpFile;
+	delete mpEdit;
+	delete mpSearch;
 	delete dialogBox;
 	delete progress;
 	delete choice;
@@ -195,7 +214,13 @@ void mywin::create()
 {
 	FXMainWindow::create();
 	show(PLACEMENT_SCREEN);
-	//tabWin->execute();
+}
+
+long mywin::editStudents(FXObject*,FXSelector,void*)
+{
+	puts("Editing students...");
+	tabWin->execute();
+	return 1;
 }
 
 // Quit GUI

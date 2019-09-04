@@ -49,7 +49,8 @@ void Db::open(const char*dbfname)
 // Global SQLITE3 callback
 int sqlite3_print_row(void* data_file,int argc,char**argv,char**)
 {
-	//for(int i=0;cols[i];++i) fprintf((FILE*)data_file,"%s,\t",cols[i]);
+	//for(int i=0;cols[i];++i)
+		//fprintf((FILE*)data_file,"%s,\t",cols[i]);
 	for(int i=0;i<argc;++i)
 		fprintf((FILE*)data_file,"%s,\t",argv[i]);
 	fputs("\n",(FILE*)data_file);
