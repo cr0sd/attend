@@ -4,7 +4,7 @@
 #include<stdio.h>
 #define PROGNAME "Attend"
 
-//#define AT_WINDOWS
+#define AT_WINDOWS
 
 class Dir
 {
@@ -51,8 +51,6 @@ char *Dir::getWd(const char *append=NULL)
 
 Dir::Dir()
 {
-
-	puts("Dir::Dir()");
 	// Create dir_wd
 	char *t=(char*)malloc(1024);
 #ifdef AT_WINDOWS

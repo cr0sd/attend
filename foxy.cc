@@ -87,13 +87,13 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	dir=new Dir;
 	db=new Db(dir);
 	st=new St[512];
-	puts(dir->getWd());
-	puts(dir->getDataDir());
+	printf("Working directory:\t%s\n",dir->getWd());
+	printf("Data files directory:\t%s\n",dir->getDataDir());
 
-	puts(dir->getWd("config.ini"));
-	puts(dir->getDataDir("data.db"));
+	printf("Config directory:\t%s\n",dir->getWd("config.ini"));
+	printf("Database directory:\t%s\n",dir->getDataDir("data.db"));
 
-	puts(dir->getDataDir("file.csv"));
+	printf("CSV file directory:\t%s\n",dir->getDataDir("file.csv"));
 
 	// Set up GUI stuff -----
 
