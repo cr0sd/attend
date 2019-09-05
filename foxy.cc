@@ -113,7 +113,8 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	tabWin->setIcon(ico);
 	new FXButton(tabWin,"OK",0,tabWin,FXDialogBox::ID_ACCEPT,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
 	new FXButton(tabWin,"Cancel",0,tabWin,FXDialogBox::ID_CANCEL,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
-	tabWinTable=new FXTable(tabWin,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	tabWinTable=new FXTable(tabWin,NULL,0,
+		LAYOUT_FILL_X|LAYOUT_FILL_Y|TABLE_ROW_RENUMBER);
 	tabWinTable->insertColumns(0,1);
 	tabWinTable->insertRows(0,50);
 	//tabWinTable->setItemText(1,2,"<text>");
