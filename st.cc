@@ -35,14 +35,3 @@ void SaveStArray(St*s,int n,const char*fn)
 	}
 	fclose(f);
 }
-
-int main()
-{
-	// Read and write an array of St(udents).
-	St s[10];
-	s[0].name("Johnny");
-	s[0].uname("jboy12");
-	s[0].pw("234dhjk8");
-	s[1].name("Sarah");
-	SaveStArray(s,10,"file.txt");
-}
