@@ -61,6 +61,8 @@ public:
 	void loadStudents();
 	long saveStudents(FXObject*,FXSelector,void*);
 
+
+	void syncStData();
 	void create();
 	mywin(FXApp*a);
 	~mywin();
@@ -113,7 +115,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	new FXButton(tabWin,"Cancel",0,tabWin,FXDialogBox::ID_CANCEL,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
 	tabWinTable=new FXTable(tabWin,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	tabWinTable->insertColumns(0,1);
-	tabWinTable->insertRows(0,30);
+	tabWinTable->insertRows(0,50);
 	//tabWinTable->setItemText(1,2,"<text>");
 	tabWinTable->setColumnText(0,"Name");
 
@@ -204,20 +206,45 @@ void mywin::create()
 	show(PLACEMENT_SCREEN);
 }
 
+void mywin::syncStData()
+{
+	// Update tabWinTable and list from St array
+	list->clearItems();
+	for(int i=0;i<50;++i)
+	{
+		if(!st[i].n.empty())
+		{
+			list->appendItem(st[i].n);
+			tabWinTable->setItemText(i,0,st[i].n);
+		}
+		else
+			tabWinTable->setItemText(i,0,"");
+	}
+	list->sortItems();
+}
+
 long mywin::editStudents(FXObject*,FXSelector,void*)
 {
 	puts("Editing students...");
+
+	puts("loading st file...");
+	//LoadStArray(st,50,"s.txt"); // Update St
+	syncStData(); // Update GUI
+
 	if(tabWin->execute()==1)
 	{
-		puts("Saving students file..."),
-		SaveStArray(st,50,"s.txt");
+		puts("Saving students file...");
 		for(int i=0;i<50;++i)
-			if(!st[i].n.empty())
-				list->clearItems(),
-				list->appendItem(st[i].n),
-				//tabWinTable->clearItems(),
-				tabWinTable->setItemText(i,0,st[i].n);
+			st[i].n=tabWinTable->getItemText(i,0);
+		SaveStArray(st,50,"s.txt");
 	}
+	else
+	{
+		puts("did not save students file");
+		LoadStArray(st,50,"s.txt");
+	}
+
+	syncStData();
 	return 1;
 }
 
