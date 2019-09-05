@@ -37,8 +37,8 @@ void CSSub(char*s,char a,char b,bool all=true)
 // Global functions to manage array of St(udents)
 void SaveStArray(St*s,int n,const char*fn)
 {
-	FILE*f=fopen(fn,"w");
-	if(!f){printf("error:can't open %s\n",fn);return;}
+	FILE*f=fopen(fn,"w+");
+	if(!f){printf("error:can't open '%s'\n",fn);return;}
 	for(int i=0;i<n;++i)
 	{
 		fputs(s[i].name(),f);fputc('\n',f);
@@ -50,8 +50,8 @@ void SaveStArray(St*s,int n,const char*fn)
 
 void LoadStArray(St*s,int n,const char*fn)
 {
-	FILE*f=fopen(fn,"r");
-	if(!f){printf("error:can't open %s\n",fn);return;}
+	FILE*f=fopen(fn,"r+");
+	if(!f){printf("error:can't open '%s'\n",fn);return;}
 
 	char t[512]={0};
 	for(int i=0;i<n&&!feof(f);++i)

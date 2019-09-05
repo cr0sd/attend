@@ -168,8 +168,11 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	//Sort table, set selection to first
 	list->setSortFunc((FXListSortFunc)listSort);
 	list->sortItems();
-	list->setCurrentItem(0);
-	list->selectItem(0); // So that the user knows who is SIGNed IN or OUT
+	if(list->getNumItems()>0)
+	{
+		list->setCurrentItem(0);
+		list->selectItem(0); // So that the user knows who is SIGNed IN or OUT
+	}
 
 	resize(640,480);
 
@@ -228,7 +231,7 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	puts("Editing students...");
 
 	puts("loading st file...");
-	//LoadStArray(st,50,"s.txt"); // Update St
+	//LoadStArray(st,50,dir->getDataDir("s.txt")); // Update St
 	syncStData(); // Update GUI
 
 	if(tabWin->execute()==1)
@@ -236,12 +239,12 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 		puts("Saving students file...");
 		for(int i=0;i<50;++i)
 			st[i].n=tabWinTable->getItemText(i,0);
-		SaveStArray(st,50,"s.txt");
+		SaveStArray(st,50,dir->getDataDir("s.txt"));
 	}
 	else
 	{
 		puts("did not save students file");
-		LoadStArray(st,50,"s.txt");
+		LoadStArray(st,50,dir->getDataDir("s.txt"));
 	}
 
 	syncStData();
@@ -251,13 +254,13 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 void mywin::loadStudents()
 {
 	puts("Loading students...");
-	LoadStArray(st,50,"s.txt");
+	LoadStArray(st,50,dir->getDataDir("s.txt"));
 }
 
 long mywin::saveStudents(FXObject*,FXSelector,void*)
 {
 	puts("Saving students...");
-	SaveStArray(st,50,"s.txt");
+	SaveStArray(st,50,dir->getDataDir("s.txt"));
 	return 1;
 }
 
