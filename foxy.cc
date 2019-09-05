@@ -27,7 +27,7 @@ class mywin : public FXMainWindow
 
 	Db *db;		// sqly.cc
 	Dir *dir;	// dir.cc
-	St *st;	// st.cc
+	St *st;		// st.cc
 
 	mywin(){}
 
@@ -57,6 +57,7 @@ public:
 	long queryAllTardies(FXObject*,FXSelector,void*);
 	long queryAllLeaveEarlies(FXObject*,FXSelector,void*);
 	long editStudents(FXObject*,FXSelector,void*);
+	void loadStudents();
 
 	void create();
 	mywin(FXApp*a);
@@ -152,28 +153,37 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// List of students
 	list=new FXList(this,NULL,0,
 		LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|LIST_BROWSESELECT);
-	
-	list->appendItem("John Smith");
-	list->appendItem("Sam Adams");
-	list->appendItem("Joe Schmoe");
-	list->appendItem("Harold Borg");
-	list->appendItem("Norm Andersson");
-	list->appendItem("Sarah Peters");
-	list->appendItem("Joe Schmoe");
-	list->appendItem("Jane Jingleheimerschmidt");
-	list->appendItem("Andrew Roberts");
-	list->appendItem("Bob Roberts");
-	list->appendItem("Norm Andersson");
-	list->appendItem("Frank Franks");
-	list->appendItem("Sam Adams");
-	list->appendItem("Sarah Peters");
-	list->appendItem("Joe Schmoe");
-	list->appendItem("Sam Adams");
-	list->appendItem("Paul Garrison");
-	list->appendItem("Harold Borg");
-	list->appendItem("Phil Juares");
-	list->appendItem("Pat Patterson");
-	list->appendItem("Joe Jibbers");
+
+	loadStudents();
+	for(int i=0;i<50;++i)
+	{
+		if(!st[i].n.empty())
+			list->appendItem(st[i].n);
+		//else
+			//list->appendItem("empty");
+	}
+
+	//list->appendItem("John Smith");
+	//list->appendItem("Sam Adams");
+	//list->appendItem("Joe Schmoe");
+	//list->appendItem("Harold Borg");
+	//list->appendItem("Norm Andersson");
+	//list->appendItem("Sarah Peters");
+	//list->appendItem("Joe Schmoe");
+	//list->appendItem("Jane Jingleheimerschmidt");
+	//list->appendItem("Andrew Roberts");
+	//list->appendItem("Bob Roberts");
+	//list->appendItem("Norm Andersson");
+	//list->appendItem("Frank Franks");
+	//list->appendItem("Sam Adams");
+	//list->appendItem("Sarah Peters");
+	//list->appendItem("Joe Schmoe");
+	//list->appendItem("Sam Adams");
+	//list->appendItem("Paul Garrison");
+	//list->appendItem("Harold Borg");
+	//list->appendItem("Phil Juares");
+	//list->appendItem("Pat Patterson");
+	//list->appendItem("Joe Jibbers");
 
 	//Sort table, set selection to first
 	list->setSortFunc((FXListSortFunc)listSort);
@@ -221,6 +231,12 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	puts("Editing students...");
 	tabWin->execute();
 	return 1;
+}
+
+void mywin::loadStudents()
+{
+	puts("Loading students...");
+	LoadStArray(st,50,"s.txt");
 }
 
 // Quit GUI
