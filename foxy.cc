@@ -42,7 +42,8 @@ public:
 		ID_QUERYWHERENAME,
 		ID_QUERYTARDIES,
 		ID_QUERYLEAVES,
-		ID_EDITSTUDENTS
+		ID_EDITSTUDENTS,
+		ID_SAVESTUDENTS
 	};
 
 	// FOX-1.6 callbacks
@@ -58,6 +59,7 @@ public:
 	long queryAllLeaveEarlies(FXObject*,FXSelector,void*);
 	long editStudents(FXObject*,FXSelector,void*);
 	void loadStudents();
+	long saveStudents(FXObject*,FXSelector,void*);
 
 	void create();
 	mywin(FXApp*a);
@@ -76,7 +78,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYWHERENAME,mywin::queryAllByName),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYTARDIES,mywin::queryAllTardies),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_EDITSTUDENTS,mywin::editStudents)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_EDITSTUDENTS,mywin::editStudents),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_SAVESTUDENTS,mywin::saveStudents)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -204,7 +207,17 @@ void mywin::create()
 long mywin::editStudents(FXObject*,FXSelector,void*)
 {
 	puts("Editing students...");
-	tabWin->execute();
+	if(tabWin->execute()==1)
+	{
+		puts("Saving students file..."),
+		SaveStArray(st,50,"s.txt");
+		for(int i=0;i<50;++i)
+			if(!st[i].n.empty())
+				list->clearItems(),
+				list->appendItem(st[i].n),
+				//tabWinTable->clearItems(),
+				tabWinTable->setItemText(i,0,st[i].n);
+	}
 	return 1;
 }
 
@@ -212,6 +225,13 @@ void mywin::loadStudents()
 {
 	puts("Loading students...");
 	LoadStArray(st,50,"s.txt");
+}
+
+long mywin::saveStudents(FXObject*,FXSelector,void*)
+{
+	puts("Saving students...");
+	SaveStArray(st,50,"s.txt");
+	return 1;
 }
 
 // Quit GUI
