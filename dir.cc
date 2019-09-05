@@ -4,7 +4,7 @@
 #include<stdio.h>
 #define PROGNAME "Attend"
 
-#define AT_WINDOWS
+//#define AT_WINDOWS
 
 class Dir
 {

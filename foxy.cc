@@ -156,34 +156,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	loadStudents();
 	for(int i=0;i<50;++i)
-	{
 		if(!st[i].n.empty())
-			list->appendItem(st[i].n);
-		//else
-			//list->appendItem("empty");
-	}
-
-	//list->appendItem("John Smith");
-	//list->appendItem("Sam Adams");
-	//list->appendItem("Joe Schmoe");
-	//list->appendItem("Harold Borg");
-	//list->appendItem("Norm Andersson");
-	//list->appendItem("Sarah Peters");
-	//list->appendItem("Joe Schmoe");
-	//list->appendItem("Jane Jingleheimerschmidt");
-	//list->appendItem("Andrew Roberts");
-	//list->appendItem("Bob Roberts");
-	//list->appendItem("Norm Andersson");
-	//list->appendItem("Frank Franks");
-	//list->appendItem("Sam Adams");
-	//list->appendItem("Sarah Peters");
-	//list->appendItem("Joe Schmoe");
-	//list->appendItem("Sam Adams");
-	//list->appendItem("Paul Garrison");
-	//list->appendItem("Harold Borg");
-	//list->appendItem("Phil Juares");
-	//list->appendItem("Pat Patterson");
-	//list->appendItem("Joe Jibbers");
+			list->appendItem(st[i].n),
+			tabWinTable->setItemText(i,0,st[i].n);
 
 	//Sort table, set selection to first
 	list->setSortFunc((FXListSortFunc)listSort);
