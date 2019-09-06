@@ -153,10 +153,11 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	new FXMenuCommand(mpSearch,"Query&LeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
 
 	// Buttons
-	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
-	buttonSignin=new FXButton (this,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	FXHorizontalFrame*fff=new FXHorizontalFrame(this);
+	//buttonQuit=new FXButton (fff,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignin=new FXButton (fff,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignin->setBackColor(0x88dd88);
-	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignout=new FXButton (fff,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignout->setBackColor(0x88dddd);
 
 	// List of students
@@ -191,7 +192,7 @@ mywin::~mywin()
 	delete[] st;
 
 	// GUI
-	delete buttonQuit;
+	//delete buttonQuit;
 	delete buttonSignin;
 	delete buttonSignout;
 	delete menubar;
