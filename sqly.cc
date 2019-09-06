@@ -148,7 +148,8 @@ void Db::selectAllTardies(const char*sqlTime)
 {
 	puts("selectAllTardies");
 	char sql[512];
-	sprintf(sql,"SELECT name,count(*) FROM attendance WHERE time>time('%s') AND type='SIGNIN' GROUP BY name ORDER BY name;",sqlTime);
+	//sprintf(sql,"SELECT name,count(*) FROM attendance WHERE time>time('%s') AND type='SIGNIN' GROUP BY name ORDER BY name;",sqlTime);
+	sprintf(sql,"SELECT * FROM attendance WHERE time>time('%s') AND type='SIGNIN' ORDER BY name;",sqlTime);
 	outputCsv(sql,"file.csv");
 }
 
@@ -156,9 +157,13 @@ void Db::selectAllLeaveEarlies(const char*sqlTime)
 {
 	puts("selectAllLeaveEarlies: Needs to be implemented");
 	char sql[512];
-	sprintf(sql,"SELECT name,count(*),AVG('%s'-time) FROM attendance "
+	//sprintf(sql,"SELECT name,count(*),AVG('%s'-time) FROM attendance "
+				//"WHERE time<time('%s') AND type='SIGNOUT' "
+				//"GROUP BY name ORDER BY name;",
+				//sqlTime,sqlTime);
+	sprintf(sql,"SELECT * FROM attendance "
 				"WHERE time<time('%s') AND type='SIGNOUT' "
-				"GROUP BY name ORDER BY name;",
-				sqlTime,sqlTime);
+				"ORDER BY name;",
+				sqlTime);
 	outputCsv(sql,"file.csv");
 }
