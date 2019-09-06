@@ -111,10 +111,11 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Set FXTopWindow (dialog boxes)
 	tabWin=new FXDialogBox(this,"Students",DECOR_ALL,0,0,480,480);
 	tabWin->setIcon(ico);
-	new FXButton(tabWin,"OK",0,tabWin,FXDialogBox::ID_ACCEPT,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
+	new FXButton(tabWin,"OK",0,tabWin,FXDialogBox::ID_ACCEPT,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,75,20);
 	new FXButton(tabWin,"Cancel",0,tabWin,FXDialogBox::ID_CANCEL,BUTTON_NORMAL|LAYOUT_FIX_WIDTH,0,0,150,20);
 	tabWinTable=new FXTable(tabWin,NULL,0,
-		LAYOUT_FILL_X|LAYOUT_FILL_Y|TABLE_ROW_RENUMBER);
+		LAYOUT_FILL_X|LAYOUT_FILL_Y|TABLE_ROW_RENUMBER|
+		TABLE_NO_ROWSELECT|TABLE_NO_COLSELECT);
 	tabWinTable->insertColumns(0,1);
 	tabWinTable->insertRows(0,50);
 	//tabWinTable->setItemText(1,2,"<text>");
@@ -154,7 +155,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	// Buttons
 	buttonQuit=new FXButton (this,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignin=new FXButton (this,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignin->setBackColor(0x88dd88);
 	buttonSignout=new FXButton (this,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignout->setBackColor(0x88dddd);
 
 	// List of students
 	list=new FXList(this,NULL,0,
