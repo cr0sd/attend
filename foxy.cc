@@ -15,6 +15,8 @@
 "Title: " PROGRAMTITLE "\n" "Time of build: " COMPILETIME \
 "\n" "System: " COMPILESYSTEM
 
+#define STFILENAME "st.dat"
+
 FXint listSort(FXListItem*a,FXListItem*b);
 
 // define mywin class
@@ -134,6 +136,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	tabWinTable->insertRows(0,50);
 	//tabWinTable->setItemText(1,2,"<text>");
 	tabWinTable->setColumnText(0,"Name");
+	//tabWinTable->setColumnText(1,"Username");
+	//tabWinTable->setColumnText(2,"Password");
+
 
 	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
 	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
@@ -254,7 +259,7 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	puts("Editing students...");
 
 	puts("loading st file...");
-	//LoadStArray(st,50,dir->getDataDir("s.txt")); // Update St
+	//LoadStArray(st,50,dir->getDataDir(STFILENAME)); // Update St
 	syncStData(); // Update GUI
 
 	if(tabWin->execute(PLACEMENT_SCREEN)==1)
@@ -262,12 +267,12 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 		puts("Saving students file...");
 		for(int i=0;i<50;++i)
 			st[i].n=tabWinTable->getItemText(i,0);
-		SaveStArray(st,50,dir->getDataDir("s.txt"));
+		SaveStArray(st,50,dir->getDataDir(STFILENAME));
 	}
 	else
 	{
 		puts("did not save students file");
-		LoadStArray(st,50,dir->getDataDir("s.txt"));
+		LoadStArray(st,50,dir->getDataDir(STFILENAME));
 	}
 
 	syncStData();
@@ -277,13 +282,13 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 void mywin::loadStudents()
 {
 	puts("Loading students...");
-	LoadStArray(st,50,dir->getDataDir("s.txt"));
+	LoadStArray(st,50,dir->getDataDir(STFILENAME));
 }
 
 long mywin::saveStudents(FXObject*,FXSelector,void*)
 {
 	puts("Saving students...");
-	SaveStArray(st,50,dir->getDataDir("s.txt"));
+	SaveStArray(st,50,dir->getDataDir(STFILENAME));
 	return 1;
 }
 

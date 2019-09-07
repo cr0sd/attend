@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stddef.h>
 
 #define ST FXString
 #define ST_TOCS text
@@ -36,7 +37,7 @@ char*encrypt(const char*s,char key)
 	char*r=NULL;
 
 	// Edge case: empty string, set to empty string and return
-	if(strl==1)
+	if(strl==1 || s[0]==0)
 	{
 		r=new char[1]();
 		return r;
@@ -58,7 +59,7 @@ char*decrypt(const char*s,char key)
 	char*r=NULL;
 
 	// Edge case: empty string, set to empty string and return
-	if(strl==1)
+	if(strl==1 || s[0]==0)
 	{
 		r=new char[1]();
 		return r;
@@ -88,20 +89,30 @@ void CSSub(char*s,char a,char b,bool all=true)
 // Save St array to file fn
 void SaveStArray(St*s,int n,const char*fn)
 {
+	// Create file, save each member of s
 	FILE*f=fopen(fn,"wb+");
 	if(!f){printf("error:can't open '%s'\n",fn);return;}
+
 	for(int i=0;i<n;++i)
 	{
-		fputs(s[i].name(),f);fputc('\n',f);
+		size_t sl;
 
-		//encrypt pw before saving
-		char*encryptedPw=encrypt(s[i].uname(),ENC_KEY);
-		int siz=strlen(encryptedPw);
-		fwrite(&siz,4,1,f);
-		fputs(encryptedPw,f);fputc('\n',f);
+		// Save name
+		sl=strlen(s[i].name());
+		fwrite(&sl,sizeof(size_t),1,f);
+		fwrite(s[i].name(),1,sl,f);
+
+		// Save uname
+		sl=strlen(s[i].uname());
+		fwrite(&sl,sizeof(size_t),1,f);
+		fwrite(s[i].uname(),1,sl,f);
+
+		// Encrypt, save pw
+		char*encryptedPw=encrypt(s[i].pw(),ENC_KEY);
+		sl=strlen(encryptedPw);
+		fwrite(&sl,sizeof(size_t),1,f);
+		fwrite(encryptedPw,1,sl,f);
 		delete[] encryptedPw;
-
-		fputs(s[i].pw(),f);fputc('\n',f);
 	}
 	fclose(f);
 }
@@ -116,25 +127,33 @@ void LoadStArray(St*s,int n,const char*fn)
 	char t[512]={0};
 	for(int i=0;i<n&&!feof(f);++i)
 	{
-		fgets(t,512,f);
-		CSSub(t,'\n','\0',false);
+
+		size_t sl;
+
+		// Read Name
+		t[0]=0;
+		fread(&sl,sizeof(size_t),1,f);
+		fread(t,1,sl,f);
+		printf("NAME got '%s'\n",t);
+		//CSSub(t,'\n','\0',false); // Convert endlines to null-terms
 		s[i].name(t);
 
-		fgets(t,512,f);
-		CSSub(t,'\n','\0',false);
+		// Read uname
+		t[0]=0;
+		fread(&sl,sizeof(size_t),1,f);
+		fread(t,1,sl,f);
+		printf("UNAME got '%s'\n",t);
+		//CSSub(t,'\n','\0',false); // Convert endlines to null-terms
 		s[i].uname(t);
 
-		//encrypt pw before saving
-		int siz;
-		fread(&siz,4,1,f);
-		fread(t,1,siz,f);
+		// Read, decrypt pw
+		t[0]=0;
+		fread(&sl,sizeof(size_t),1,f);
+		fread(t,1,sl,f);
+		printf("PW got '%s'\n",t);
 		char*decryptedPw=decrypt(t,ENC_KEY);
-		s[i].pw(decryptedPw);
-		delete[] decryptedPw;
-
-		fgets(t,512,f);
-		CSSub(t,'\n','\0',false);
 		s[i].pw(t);
+		delete[] decryptedPw;
 	}
 	fclose(f);
 }
