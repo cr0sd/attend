@@ -147,10 +147,10 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 
 	new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
 
-	new FXMenuCommand(mpSearch,"Q&uery",NULL,this,mywin::ID_QUERY);
-	new FXMenuCommand(mpSearch,"QueryBy&Name",NULL,this,mywin::ID_QUERYWHERENAME);
-	new FXMenuCommand(mpSearch,"Query&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
-	new FXMenuCommand(mpSearch,"Query&LeaveEarlies",NULL,this,mywin::ID_QUERYLEAVES);
+	new FXMenuCommand(mpSearch,"Query &All",NULL,this,mywin::ID_QUERY);
+	new FXMenuCommand(mpSearch,"Query By &Name",NULL,this,mywin::ID_QUERYWHERENAME);
+	new FXMenuCommand(mpSearch,"Query &Tardies",NULL,this,mywin::ID_QUERYTARDIES);
+	new FXMenuCommand(mpSearch,"Query &Leave Earlies",NULL,this,mywin::ID_QUERYLEAVES);
 
 	// Buttons
 	FXHorizontalFrame*fff=new FXHorizontalFrame(this);
