@@ -5,6 +5,16 @@
 #include"st.cc"
 #include<time.h>
 
+#if defined(AT_WINDOWS)
+#define COMPILESYSTEM "Windows"
+#else
+#define COMPILESYSTEM "Linux/Mac"
+#endif
+
+#define ABOUT_STRING \
+"Title: " PROGRAMTITLE "\n" "Time of build: " COMPILETIME \
+"\n" "System: " COMPILESYSTEM
+
 FXint listSort(FXListItem*a,FXListItem*b);
 
 // define mywin class
@@ -18,6 +28,7 @@ class mywin : public FXMainWindow
 	FXMenuPane			*mpFile;
 	FXMenuPane			*mpEdit;
 	FXMenuPane			*mpSearch;
+	FXMenuPane			*mpHelp;
 	FXFileDialog		*dialogBox;
 	FXProgressDialog	*progress;
 	FXChoiceBox			*choice;
@@ -43,7 +54,8 @@ public:
 		ID_QUERYTARDIES,
 		ID_QUERYLEAVES,
 		ID_EDITSTUDENTS,
-		ID_SAVESTUDENTS
+		ID_SAVESTUDENTS,
+		ID_ABOUT
 	};
 
 	// FOX-1.6 callbacks
@@ -60,6 +72,7 @@ public:
 	long editStudents(FXObject*,FXSelector,void*);
 	void loadStudents();
 	long saveStudents(FXObject*,FXSelector,void*);
+	long about(FXObject*,FXSelector,void*);
 
 
 	void syncStData();
@@ -81,7 +94,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYTARDIES,mywin::queryAllTardies),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_EDITSTUDENTS,mywin::editStudents),
-	FXMAPFUNC(SEL_COMMAND,mywin::ID_SAVESTUDENTS,mywin::saveStudents)
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_SAVESTUDENTS,mywin::saveStudents),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_ABOUT,mywin::mywin::about)
 };
 
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
@@ -138,19 +152,22 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
 	mpFile=new FXMenuPane(this);
 	mpEdit=new FXMenuPane(this);
 	mpSearch=new FXMenuPane(this);
+	mpHelp=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
 	new FXMenuTitle(menubar,"&Edit",NULL,mpEdit);
 	new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
+	new FXMenuTitle(menubar,"&Help",NULL,mpHelp,LAYOUT_RIGHT);
 
 	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
 	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
+	new FXMenuCommand(mpHelp,"&About",NULL,this,mywin::ID_ABOUT);
 
 	new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
 
-	new FXMenuCommand(mpSearch,"Query &All",NULL,this,mywin::ID_QUERY);
-	new FXMenuCommand(mpSearch,"Query By &Name",NULL,this,mywin::ID_QUERYWHERENAME);
-	new FXMenuCommand(mpSearch,"Query &Tardies",NULL,this,mywin::ID_QUERYTARDIES);
-	new FXMenuCommand(mpSearch,"Query &Leave Earlies",NULL,this,mywin::ID_QUERYLEAVES);
+	new FXMenuCommand(mpSearch,"&All",NULL,this,mywin::ID_QUERY);
+	new FXMenuCommand(mpSearch,"By &Name",NULL,this,mywin::ID_QUERYWHERENAME);
+	new FXMenuCommand(mpSearch,"&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
+	new FXMenuCommand(mpSearch,"&Leave Earlies",NULL,this,mywin::ID_QUERYLEAVES);
 
 	// Buttons
 	FXHorizontalFrame*fff=new FXHorizontalFrame(this);
@@ -199,6 +216,7 @@ mywin::~mywin()
 	delete mpFile;
 	delete mpEdit;
 	delete mpSearch;
+	delete mpHelp;
 	delete dialogBox;
 	delete progress;
 	delete choice;
@@ -392,6 +410,15 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 	db->selectAllLeaveEarlies(sqlTime);
 
 	progress->hide();
+	return 1;
+}
+
+long mywin::about(FXObject*,FXSelector,void*)
+{
+	FXMessageBox*x=new FXMessageBox(this,"About",
+		ABOUT_STRING,NULL,MBOX_OK,0,0);
+	x->execute();
+	delete x;
 	return 1;
 }
 

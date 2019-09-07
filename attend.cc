@@ -1,6 +1,9 @@
 #include<fox-1.6/fx.h>
 #include<sqlite3.h>
 
+#define PROGRAMTITLE "Attend"
+#define COMPILETIME __DATE__ ", " __TIME__
+
 #include"foxy.cc"
 #include"sqly.cc"
 
