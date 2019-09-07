@@ -2,7 +2,7 @@
 
 #include<stdlib.h>
 #include<stdio.h>
-#define PROGNAME "Attend"
+#define PROGNAME PROGRAMTITLE
 
 //#define AT_WINDOWS
 
