@@ -101,7 +101,7 @@ FXDEFMAP(mywin) mywinMap[]=
 FXIMPLEMENT(mywin,FXMainWindow,mywinMap,ARRAYNUMBER(mywinMap))
 
 // mywin  CLASS CONSTRUCTOR!!
-mywin::mywin(FXApp*a) : FXMainWindow(a,"Attend")
+mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 {
 
 	dir=new Dir;
@@ -257,7 +257,7 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	//LoadStArray(st,50,dir->getDataDir("s.txt")); // Update St
 	syncStData(); // Update GUI
 
-	if(tabWin->execute()==1)
+	if(tabWin->execute(PLACEMENT_SCREEN)==1)
 	{
 		puts("Saving students file...");
 		for(int i=0;i<50;++i)
@@ -417,7 +417,7 @@ long mywin::about(FXObject*,FXSelector,void*)
 {
 	FXMessageBox*x=new FXMessageBox(this,"About",
 		ABOUT_STRING,NULL,MBOX_OK,0,0);
-	x->execute();
+	x->execute(PLACEMENT_SCREEN);
 	delete x;
 	return 1;
 }
