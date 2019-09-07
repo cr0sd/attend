@@ -132,12 +132,12 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	tabWinTable=new FXTable(tabWin,NULL,0,
 		LAYOUT_FILL_X|LAYOUT_FILL_Y|TABLE_ROW_RENUMBER|
 		TABLE_NO_ROWSELECT|TABLE_NO_COLSELECT);
-	tabWinTable->insertColumns(0,1);
+	tabWinTable->insertColumns(0,3);
 	tabWinTable->insertRows(0,50);
 	//tabWinTable->setItemText(1,2,"<text>");
 	tabWinTable->setColumnText(0,"Name");
-	//tabWinTable->setColumnText(1,"Username");
-	//tabWinTable->setColumnText(2,"Password");
+	tabWinTable->setColumnText(1,"Username");
+	tabWinTable->setColumnText(2,"Password");
 
 
 	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
@@ -250,6 +250,16 @@ void mywin::syncStData()
 		}
 		else
 			tabWinTable->setItemText(i,0,"");
+
+		if(!st[i].u.empty())
+			tabWinTable->setItemText(i,1,st[i].u);
+		else
+			tabWinTable->setItemText(i,1,"");
+
+		if(!st[i].p.empty())
+			tabWinTable->setItemText(i,2,st[i].p);
+		else
+			tabWinTable->setItemText(i,2,"");
 	}
 	list->sortItems();
 }
@@ -266,7 +276,11 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	{
 		puts("Saving students file...");
 		for(int i=0;i<50;++i)
+		{
 			st[i].n=tabWinTable->getItemText(i,0);
+			st[i].u=tabWinTable->getItemText(i,1);
+			st[i].p=tabWinTable->getItemText(i,2);
+		}
 		SaveStArray(st,50,dir->getDataDir(STFILENAME));
 	}
 	else

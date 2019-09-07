@@ -45,7 +45,8 @@ char*encrypt(const char*s,char key)
 	// Normal case: encrypt and return
 	else
 	{
-		r=new char[strl];
+		r=new char[strl]();
+		//printf("THISISPASSWORD!(%s)\n",r);
 		for(int i=0;i<strl;++i)
 			r[i]=s[i]^key;
 		return r;
@@ -109,7 +110,9 @@ void SaveStArray(St*s,int n,const char*fn)
 
 		// Encrypt, save pw
 		char*encryptedPw=encrypt(s[i].pw(),ENC_KEY);
-		sl=strlen(encryptedPw);
+		// TODO: can't get strlen of arbitrary array
+		sl=strlen(s[i].pw());
+		printf("PW: %s\nENC_PW: %s\n",s[i].pw(),encryptedPw);
 		fwrite(&sl,sizeof(size_t),1,f);
 		fwrite(encryptedPw,1,sl,f);
 		delete[] encryptedPw;
@@ -131,26 +134,26 @@ void LoadStArray(St*s,int n,const char*fn)
 		size_t sl;
 
 		// Read Name
-		t[0]=0;
+		memset(t,0,512);
 		fread(&sl,sizeof(size_t),1,f);
 		fread(t,1,sl,f);
-		printf("NAME got '%s'\n",t);
+		//printf("NAME got '%s'\n",t);
 		//CSSub(t,'\n','\0',false); // Convert endlines to null-terms
 		s[i].name(t);
 
 		// Read uname
-		t[0]=0;
+		memset(t,0,512);
 		fread(&sl,sizeof(size_t),1,f);
 		fread(t,1,sl,f);
-		printf("UNAME got '%s'\n",t);
+		//printf("UNAME got '%s'\n",t);
 		//CSSub(t,'\n','\0',false); // Convert endlines to null-terms
 		s[i].uname(t);
 
 		// Read, decrypt pw
-		t[0]=0;
+		memset(t,0,512);
 		fread(&sl,sizeof(size_t),1,f);
 		fread(t,1,sl,f);
-		printf("PW got '%s'\n",t);
+		//printf("PW got '%s'\n",t);
 		char*decryptedPw=decrypt(t,ENC_KEY);
 		s[i].pw(t);
 		delete[] decryptedPw;

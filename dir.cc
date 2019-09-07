@@ -2,7 +2,6 @@
 
 #include<stdlib.h>
 #include<stdio.h>
-#define PROGNAME PROGRAMTITLE
 
 //#define AT_WINDOWS
 
@@ -55,7 +54,7 @@ Dir::Dir()
 	char *t=(char*)malloc(1024);
 #ifdef AT_WINDOWS
 	int i=sprintf(t,"%s",getenv("PROGRAMFILES"));
-	sprintf(t+i,"\\%s",PROGNAME);
+	sprintf(t+i,"\\%s",PROGRAMTITLE);
 	dir_wd=t;
 #else
 	strcpy(t,".");
@@ -66,7 +65,7 @@ Dir::Dir()
 	t=(char*)malloc(1024);
 #ifdef AT_WINDOWS
 	i=sprintf(t,"%s",getenv("APPDATA"));
-	sprintf(t+i,"\\%s",PROGNAME);
+	sprintf(t+i,"\\%s",PROGRAMTITLE);
 	dir_data=t;
 #else
 	strcpy(t,".");
