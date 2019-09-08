@@ -374,7 +374,7 @@ long mywin::queryAll(FXObject*,FXSelector,void*)
 	db->selectAll();
 
 	progress->setProgress(100);
-	progress->hide();
+	progress->close();
 	return 1;
 }
 
@@ -391,7 +391,7 @@ long mywin::queryAllByName(FXObject*,FXSelector,void*)
 	db->selectAllWhereName(name);
 
 	progress->setProgress(100);
-	progress->hide();
+	progress->close();
 	return 1;
 }
 
@@ -411,7 +411,7 @@ long mywin::queryAllTardies(FXObject*,FXSelector,void*)
 	db->selectAllTardies(sqlTime);
 
 	progress->setProgress(100);
-	progress->hide();
+	progress->close();
 	return 1;
 }
 
@@ -428,7 +428,7 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 	progress->show(PLACEMENT_SCREEN);
 	db->selectAllLeaveEarlies(sqlTime);
 
-	progress->hide();
+	progress->close();
 	return 1;
 }
 
