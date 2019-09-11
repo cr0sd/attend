@@ -1,7 +1,7 @@
 TG=attend
 CXX=c++
-CFLAGS=-Wfatal-errors -Wall -Wextra
-LDFLAGS=-lFOX-1.6 -lsqlite3
+CFLAGS=-Wfatal-errors -Wall -Wextra -no-pie
+LDFLAGS=-lFOX-1.6 -lsqlite3 -no-pie
 RM=@rm -f
 
 
@@ -18,7 +18,12 @@ OSDIR=-U AT_WINDOWS
 
 endif
 
-all:
-	$(CXX) $(TG).cc -o $(TG) $(CFLAGS) $(OSDIR) $(LDFLAGS) -I $(INCDIR)
+
+
+
+all: inc.o
+	$(CXX) inc.o $(TG).cc -o $(TG) $(CFLAGS) $(OSDIR) $(LDFLAGS) -I $(INCDIR)
+inc.o:
+	nasm inc.asm -f elf64
 clean:
 	$(RM) $(TG) *.o

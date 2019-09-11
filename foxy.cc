@@ -5,6 +5,8 @@
 #include"st.cc"
 #include<time.h>
 
+extern char LICENSE_STRING;
+
 #if defined(AT_WINDOWS)
 #define COMPILESYSTEM "Windows"
 #else
@@ -269,7 +271,7 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	puts("Editing students...");
 
 	puts("loading st file...");
-	//LoadStArray(st,50,dir->getDataDir(STFILENAME)); // Update St
+	LoadStArray(st,50,dir->getDataDir(STFILENAME)); // Update St
 	syncStData(); // Update GUI
 
 	if(tabWin->execute(PLACEMENT_SCREEN)==1)
@@ -434,10 +436,28 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 
 long mywin::about(FXObject*,FXSelector,void*)
 {
-	FXMessageBox*x=new FXMessageBox(this,"About",
-		ABOUT_STRING,NULL,MBOX_OK,0,0);
+	//FXMessageBox*x=new FXMessageBox(this,"About",
+		//ABOUT_STRING,NULL,MBOX_OK,0,0);
+	FXDialogBox*x=new FXDialogBox(this,"About",
+		DECOR_TITLE|DECOR_BORDER,0,0,280);
+
+	new FXLabel(x,ABOUT_STRING,0,LABEL_NORMAL);
+
+	FXText*t=new FXText(x,0,0,
+		TEXT_READONLY|LAYOUT_FILL_X|
+		LAYOUT_FIX_HEIGHT,
+		0,0,0,100);
+
+	t->setText(&LICENSE_STRING);
+
+	new FXHorizontalSeparator(x);
+
+	new FXButton(x,"OK",0,x,FXDialogBox::ID_ACCEPT,
+		BUTTON_NORMAL|LAYOUT_CENTER_X,
+		0,0,150,20);
+
 	x->execute(PLACEMENT_SCREEN);
-	delete x;
+	x->close();
 	return 1;
 }
 
