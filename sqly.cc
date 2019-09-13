@@ -134,7 +134,9 @@ void Db::outputCsv(const char*sql,const char*fname)
 
 void Db::selectAll()
 {
-	outputCsv("SELECT * FROM attendance ORDER BY name;","file.csv");
+	char sql[512];
+	sprintf(sql,"SELECT * FROM attendance;");
+	outputCsv(sql,"file.csv");
 }
 
 void Db::selectAllWhereName(const char*name)
