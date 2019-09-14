@@ -26,7 +26,7 @@ public:
 	void pw(const char*p){this->p=p;}
 
 	void RegisterAcct(St*s,int n,const char*name,
-		const char*uname,const char*pw);
+	const char*uname,const char*pw);
 	St *FindSt(St*s,int n,const char*name);
 };
 
@@ -110,7 +110,6 @@ void SaveStArray(St*s,int n,const char*fn)
 
 		// Encrypt, save pw
 		char*encryptedPw=encrypt(s[i].pw(),ENC_KEY);
-		// TODO: can't get strlen of arbitrary array
 		sl=strlen(s[i].pw());
 		printf("PW: %s\nENC_PW: %s\n",s[i].pw(),encryptedPw);
 		fwrite(&sl,sizeof(size_t),1,f);
@@ -155,7 +154,7 @@ void LoadStArray(St*s,int n,const char*fn)
 		fread(t,1,sl,f);
 		//printf("PW got '%s'\n",t);
 		char*decryptedPw=decrypt(t,ENC_KEY);
-		s[i].pw(t);
+		s[i].pw(decryptedPw);
 		delete[] decryptedPw;
 	}
 	fclose(f);
