@@ -436,8 +436,6 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 
 long mywin::about(FXObject*,FXSelector,void*)
 {
-	//FXMessageBox*x=new FXMessageBox(this,"About",
-		//ABOUT_STRING,NULL,MBOX_OK,0,0);
 	FXDialogBox*x=new FXDialogBox(this,"About",
 		DECOR_TITLE|DECOR_BORDER,0,0,280);
 
@@ -453,7 +451,7 @@ long mywin::about(FXObject*,FXSelector,void*)
 	new FXHorizontalSeparator(x);
 
 	new FXButton(x,"OK",0,x,FXDialogBox::ID_ACCEPT,
-		BUTTON_NORMAL|LAYOUT_CENTER_X,
+		BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,
 		0,0,150,20);
 
 	x->execute(PLACEMENT_SCREEN);
