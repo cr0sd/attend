@@ -7,9 +7,23 @@
 #include"foxy.cc"
 #include"sqly.cc"
 
+#include<time.h>
+#include<stdio.h>
+
+void printTime()
+{
+	char t[512];
+	struct tm *tt;
+	time_t ttt=time(NULL);
+	tt=localtime(&ttt);
+	strftime(t,512,"Current time: %F %T",tt);
+	puts(t);
+}
+
 // entry point
 int main(int argc,char**argv)
 {
+	printTime();
 	// Everything is done in mywin
 	FXApp a(PROGRAMTITLE,PROGRAMTITLE);
 	a.init(argc,argv);
