@@ -34,7 +34,7 @@ class mywin : public FXMainWindow
 	FXMenuPane			*mpSearch;
 	FXMenuPane			*mpHelp;
 	FXFileDialog		*dialogBox;
-	FXProgressDialog	*progress;
+	//FXProgressDialog	*progress;
 	FXChoiceBox			*choice;
 	FXList				*list;
 	FXDialogBox			*tabWin;
@@ -142,10 +142,10 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	tabWinTable->setColumnText(2,"Password");
 
 
-	progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
-	progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
-	progress->setTotal(100);
-	progress->setProgress(0);
+	//progress=new FXProgressDialog(this,"Processing","",PROGRESSDIALOG_NORMAL|PROGRESSDIALOG_CANCEL);
+	//progress->setBarStyle(PROGRESSBAR_NORMAL|PROGRESSBAR_HORIZONTAL|PROGRESSBAR_PERCENTAGE|LAYOUT_FILL_Y);
+	//progress->setTotal(100);
+	//progress->setProgress(0);
 
 	dialogBox=new FXFileDialog(this,"Open");
 	dialogBox->resize(320,190);
@@ -225,7 +225,7 @@ mywin::~mywin()
 	delete mpSearch;
 	delete mpHelp;
 	delete dialogBox;
-	delete progress;
+	//delete progress;
 	delete choice;
 	delete list;
 	delete tabWin;
@@ -371,12 +371,12 @@ long mywin::queryAll(FXObject*,FXSelector,void*)
 {
 	puts("queryAll");
 
-	progress->setProgress(0);
-	progress->show(PLACEMENT_SCREEN);
+	//progress->setProgress(0);
+	//progress->show(PLACEMENT_SCREEN);
 	db->selectAll();
 
-	progress->setProgress(100);
-	progress->close();
+	//progress->setProgress(100);
+	//progress->hide();
 	return 1;
 }
 
@@ -388,12 +388,12 @@ long mywin::queryAllByName(FXObject*,FXSelector,void*)
 
 	printf("queryAllByName('%s')\n",name);
 
-	progress->setProgress(0);
-	progress->show(PLACEMENT_SCREEN);
+	//progress->setProgress(0);
+	//progress->show(PLACEMENT_SCREEN);
 	db->selectAllWhereName(name);
 
-	progress->setProgress(100);
-	progress->close();
+	//progress->setProgress(100);
+	//progress->hide();
 	return 1;
 }
 
@@ -408,12 +408,12 @@ long mywin::queryAllTardies(FXObject*,FXSelector,void*)
 
 	printf("queryAllTardies('%s')\n",sqlTime);
 
-	progress->setProgress(0);
-	progress->show(PLACEMENT_SCREEN);
+	//progress->setProgress(0);
+	//progress->show(PLACEMENT_SCREEN);
 	db->selectAllTardies(sqlTime);
 
-	progress->setProgress(100);
-	progress->close();
+	//progress->setProgress(100);
+	//progress->hide();
 	return 1;
 }
 
@@ -426,11 +426,11 @@ long mywin::queryAllLeaveEarlies(FXObject*,FXSelector,void*)
 
 	printf("queryAllLeaveEarlies('%s')\n",sqlTime);
 
-	progress->setProgress(0);
-	progress->show(PLACEMENT_SCREEN);
+	//progress->setProgress(0);
+	//progress->show(PLACEMENT_SCREEN);
 	db->selectAllLeaveEarlies(sqlTime);
 
-	progress->close();
+	//progress->hide();
 	return 1;
 }
 
@@ -455,7 +455,7 @@ long mywin::about(FXObject*,FXSelector,void*)
 		0,0,150,20);
 
 	x->execute(PLACEMENT_SCREEN);
-	x->close();
+	x->hide();
 	return 1;
 }
 
