@@ -1,7 +1,7 @@
 TG=attend
 CXX=c++
 CFLAGS=-Wfatal-errors -Wall -Wextra -no-pie
-LDFLAGS=-lFOX-1.6 -lsqlite3 -lX11 -no-pie
+LDFLAGS=-lFOX-1.6 -lsqlite3 -no-pie
 RM=@rm -f
 
 
