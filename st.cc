@@ -110,7 +110,8 @@ void SaveStArray(St*s,int n,const char*fn)
 
 		// Encrypt, save pw
 		char*encryptedPw=encrypt(s[i].pw(),ENC_KEY);
-		sl=strlen(s[i].pw());
+		//sl=strlen(s[i].pw());
+		sl=strlen(encryptedPw);
 		printf("PW: %s\nENC_PW: %s\n",s[i].pw(),encryptedPw);
 		fwrite(&sl,sizeof(size_t),1,f);
 		fwrite(encryptedPw,1,sl,f);

@@ -11,13 +11,15 @@ ifeq ($(OS),Windows_NT)
 
 INCDIR=/mingw64/include/fox-1.6
 OSDIR=-D AT_WINDOWS
-WINLIBS=-luser32 -lkernel32 -ladvapi32 -lgdi32 -lws2_32 -ljpeg -lpng -ltiff -lz -llzma -lzstd -static-libstdc++
+WINLIBS=rc.o -luser32 -lkernel32 -ladvapi32 -lgdi32 -lws2_32 -ljpeg -lpng -ltiff -lz -llzma -lzstd -static-libstdc++ -mwindows
+WINDRES=windres rc.rc -o rc.o
 
 else
 
 INCDIR=/usr/include/fox-1.6
 OSDIR=-U AT_WINDOWS
 WINLIBS=
+WINDRES=
 
 endif
 
@@ -25,8 +27,11 @@ endif
 
 
 all: inc.o
+	$(WINDRES)
 	$(CXX) inc.o $(TG).cc -o $(TG) $(CFLAGS) $(OSDIR) $(LDFLAGS) $(WINLIBS) -I $(INCDIR)
 inc.o:
 	nasm inc.asm -f elf64
+rc.o:
+	windres rc.rc -o rc.o
 clean:
 	$(RM) $(TG) *.o
