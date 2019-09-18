@@ -34,17 +34,6 @@ Db::Db(Dir *dir=NULL)
 	this->dir=dir;
 }
 
-void Db::open(const char*dbfname)
-{
-	assert(this->db==NULL);
-	int r=sqlite3_open(dbfname,&db);
-	if(r)
-	{
-		printf("error:can't open database '%s'\n",dbfname);
-		return;
-	}
-}
-
 
 // Global SQLITE3 callback
 int sqlite3_print_row(void* data_file,int argc,char**argv,char**)
@@ -55,6 +44,30 @@ int sqlite3_print_row(void* data_file,int argc,char**argv,char**)
 		fprintf((FILE*)data_file,"%s,\t",argv[i]);
 	fputs("\n",(FILE*)data_file);
 	return 0;
+}
+
+void Db::open(const char*dbfname)
+{
+	assert(this->db==NULL);
+	int r=sqlite3_open(dbfname,&db);
+	if(r)
+	{
+		printf("error:can't open database '%s'\n",dbfname);
+		return;
+	}
+
+	char sql[512];
+	char*errmsg=NULL;
+	strcpy(sql,
+		"create table if not exists attendance("
+		"id integer primary key autoincrement,"
+		"name text,"
+		"date date,"
+		"time time,"
+		"type text"
+		");"
+		);
+	sqlite3_exec(db,sql,sqlite3_print_row,NULL,&errmsg);
 }
 
 void Db::insertSignIn(const char*name)
