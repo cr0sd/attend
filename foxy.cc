@@ -25,6 +25,9 @@ FXint listSort(FXListItem*a,FXListItem*b);
 class mywin : public FXMainWindow
 {
 	FXDECLARE(mywin)
+
+	FXHorizontalFrame	*horizFrame;
+
 	FXButton			*buttonQuit;
 	FXButton			*buttonSignin;
 	FXButton			*buttonSignout;
@@ -39,6 +42,17 @@ class mywin : public FXMainWindow
 	FXList				*list;
 	FXDialogBox			*tabWin;
 	FXTable				*tabWinTable;
+
+	FXMenuCommand		*edStudents;
+	FXMenuCommand		*edAdLogin;
+	FXMenuCommand		*edAdLogout;
+
+	FXMenuCommand		*quAll;
+	FXMenuCommand		*quName;
+	FXMenuCommand		*quTardies;
+	FXMenuCommand		*quLeave;
+
+	FXLabel				*adminLabel;
 
 	Db *db;		// sqly.cc
 	Dir *dir;	// dir.cc
@@ -59,6 +73,8 @@ public:
 		ID_QUERYLEAVES,
 		ID_EDITSTUDENTS,
 		ID_SAVESTUDENTS,
+		ID_ADMINLOGIN,
+		ID_ADMINLOGOUT,
 		ID_ABOUT
 	};
 
@@ -79,6 +95,8 @@ public:
 	long about(FXObject*,FXSelector,void*);
 
 
+	long adminLogin(FXObject*,FXSelector,void*);
+	long adminLogout(FXObject*,FXSelector,void*);
 	void syncStData();
 	void create();
 	mywin(FXApp*a);
@@ -99,6 +117,8 @@ FXDEFMAP(mywin) mywinMap[]=
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_QUERYLEAVES,mywin::queryAllLeaveEarlies),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_EDITSTUDENTS,mywin::editStudents),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_SAVESTUDENTS,mywin::saveStudents),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_ADMINLOGIN,mywin::adminLogin),
+	FXMAPFUNC(SEL_COMMAND,mywin::ID_ADMINLOGOUT,mywin::adminLogout),
 	FXMAPFUNC(SEL_COMMAND,mywin::ID_ABOUT,mywin::mywin::about)
 };
 
@@ -169,20 +189,25 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
 	new FXMenuCommand(mpHelp,"&About",NULL,this,mywin::ID_ABOUT);
 
-	new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
+	edStudents=new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
+	edAdLogin=new FXMenuCommand(mpEdit,"Admin &Login",NULL,this,mywin::ID_ADMINLOGIN);
+	edAdLogout=new FXMenuCommand(mpEdit,"Admin Log&out",NULL,this,mywin::ID_ADMINLOGOUT);
 
-	new FXMenuCommand(mpSearch,"&All",NULL,this,mywin::ID_QUERY);
-	new FXMenuCommand(mpSearch,"By &Name",NULL,this,mywin::ID_QUERYWHERENAME);
-	new FXMenuCommand(mpSearch,"&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
-	new FXMenuCommand(mpSearch,"&Leave Earlies",NULL,this,mywin::ID_QUERYLEAVES);
+	quAll=new FXMenuCommand(mpSearch,"&All",NULL,this,mywin::ID_QUERY);
+	quName=new FXMenuCommand(mpSearch,"By &Name",NULL,this,mywin::ID_QUERYWHERENAME);
+	quTardies=new FXMenuCommand(mpSearch,"&Tardies",NULL,this,mywin::ID_QUERYTARDIES);
+	quLeave=new FXMenuCommand(mpSearch,"&Leave Earlies",NULL,this,mywin::ID_QUERYLEAVES);
 
 	// Buttons
-	FXHorizontalFrame*fff=new FXHorizontalFrame(this);
-	//buttonQuit=new FXButton (fff,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
-	buttonSignin=new FXButton (fff,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	horizFrame=new FXHorizontalFrame(this);
+	//buttonQuit=new FXButton (horizFrame,"Quit",NULL,this,mywin::ID_QUIT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignin=new FXButton (horizFrame,"Sign in",NULL,this,mywin::ID_SIGNIN,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignin->setBackColor(0x88dd88);
-	buttonSignout=new FXButton (fff,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
+	buttonSignout=new FXButton (horizFrame,"Sign out",NULL,this,mywin::ID_SIGNOUT,BUTTON_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,150);
 	buttonSignout->setBackColor(0x88dddd);
+
+	adminLabel=new FXLabel(horizFrame,"-- ADMIN --");
+	adminLabel->setTextColor(0xff0000ff);
 
 	// List of students
 	list=new FXList(this,NULL,0,
@@ -207,6 +232,9 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 
 	printf("opening '%s'...\n",dir->getDataDir("data.db"));
 	db->open(dir->getDataDir("data.db"));
+
+	// Disable admin commands without login
+	adminLogout(NULL,0,NULL);
 }
 
 mywin::~mywin()
@@ -295,6 +323,52 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 	return 1;
 }
 
+// Login for admin functions (edit, search)
+long mywin::adminLogin(FXObject*,FXSelector,void*)
+{
+	puts("admin login");
+	quAll->enable();
+	quName->enable();
+	quTardies->enable();
+	quLeave->enable();
+	edStudents->enable();
+
+	buttonSignin->disable();
+	buttonSignout->disable();
+
+	// Disable login, enable logout
+	edAdLogout->enable();
+	edAdLogin->disable();
+
+	//adminLabel->show();
+	adminLabel->setText("-- ADMIN --");
+
+	return 1;
+}
+
+long mywin::adminLogout(FXObject*,FXSelector,void*)
+{
+	puts("admin logout");
+	quAll->disable();
+	quName->disable();
+	quTardies->disable();
+	quLeave->disable();
+	edStudents->disable();
+
+	buttonSignin->enable();
+	buttonSignout->enable();
+
+	// Enable login, disable logout
+	edAdLogout->disable();
+	edAdLogin->enable();
+
+	//adminLabel->hide();
+	adminLabel->setText("");
+
+	return 1;
+}
+
+// Manage students login information
 void mywin::loadStudents()
 {
 	puts("Loading students...");
