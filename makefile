@@ -9,6 +9,7 @@ RM=@rm -f
 # determine OS
 ifeq ($(OS),Windows_NT)
 
+# MSYS DIR
 INCDIR=/mingw64/include/fox-1.6
 OSDIR=-D AT_WINDOWS
 WINLIBS=rc.o -luser32 -lkernel32 -ladvapi32 -lgdi32 -lws2_32 -ljpeg -lpng -ltiff -lz -llzma -lzstd -static-libstdc++ -mwindows
