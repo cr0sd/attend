@@ -43,6 +43,8 @@ class mywin : public FXMainWindow
 	FXDialogBox			*tabWin;
 	FXTable				*tabWinTable;
 
+	FXMenuCommand		*fiOpen;
+
 	FXMenuCommand		*edStudents;
 	FXMenuCommand		*edAdLogin;
 	FXMenuCommand		*edAdLogout;
@@ -185,11 +187,12 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
 	new FXMenuTitle(menubar,"&Help",NULL,mpHelp,LAYOUT_RIGHT);
 
-	new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
+	fiOpen=new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
 	new FXMenuCommand(mpFile,"E&xit",NULL,this,mywin::ID_QUIT);
 	new FXMenuCommand(mpHelp,"&About",NULL,this,mywin::ID_ABOUT);
 
 	edStudents=new FXMenuCommand(mpEdit,"&Students",NULL,this,mywin::ID_EDITSTUDENTS);
+	new FXSeparator(mpEdit);
 	edAdLogin=new FXMenuCommand(mpEdit,"Admin &Login",NULL,this,mywin::ID_ADMINLOGIN);
 	edAdLogout=new FXMenuCommand(mpEdit,"Admin Log&out",NULL,this,mywin::ID_ADMINLOGOUT);
 
@@ -332,6 +335,7 @@ long mywin::adminLogin(FXObject*,FXSelector,void*)
 	quTardies->enable();
 	quLeave->enable();
 	edStudents->enable();
+	fiOpen->enable();
 
 	buttonSignin->disable();
 	buttonSignout->disable();
@@ -354,6 +358,7 @@ long mywin::adminLogout(FXObject*,FXSelector,void*)
 	quTardies->disable();
 	quLeave->disable();
 	edStudents->disable();
+	fiOpen->disable();
 
 	buttonSignin->enable();
 	buttonSignout->enable();
@@ -395,6 +400,9 @@ long mywin::signin(FXObject*,FXSelector,void*)
 {
 	static FXString msg;
 	static char name[512];
+
+	if(list->getNumItems()==0)return 1;
+
 	strcpy(name,list->getItemText(list->getCurrentItem()).text());
 
 	// Create prompt message
@@ -415,6 +423,9 @@ long mywin::signout(FXObject*,FXSelector,void*)
 {
 	static FXString msg;
 	static char name[512];
+
+	if(list->getNumItems()==0)return 1;
+
 	strcpy(name,list->getItemText(list->getCurrentItem()).text());
 
 	// Create prompt message
