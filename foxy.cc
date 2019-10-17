@@ -43,6 +43,8 @@ class mywin : public FXMainWindow
 	FXDialogBox			*tabWin;
 	FXTable				*tabWinTable;
 
+	FXMenuTitle			*mbSearch;
+
 	FXMenuCommand		*fiOpen;
 
 	FXMenuCommand		*edStudents;
@@ -184,7 +186,7 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	mpHelp=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,mpFile);
 	new FXMenuTitle(menubar,"&Edit",NULL,mpEdit);
-	new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
+	mbSearch=new FXMenuTitle(menubar,"&Search",NULL,mpSearch);
 	new FXMenuTitle(menubar,"&Help",NULL,mpHelp,LAYOUT_RIGHT);
 
 	fiOpen=new FXMenuCommand(mpFile,"&Open",NULL,this,mywin::ID_OPEN);
@@ -337,6 +339,7 @@ long mywin::adminLogin(FXObject*,FXSelector,void*)
 	edStudents->enable();
 	fiOpen->enable();
 
+	mbSearch->enable();
 	buttonSignin->disable();
 	buttonSignout->disable();
 
@@ -360,6 +363,7 @@ long mywin::adminLogout(FXObject*,FXSelector,void*)
 	edStudents->disable();
 	fiOpen->disable();
 
+	mbSearch->disable();
 	buttonSignin->enable();
 	buttonSignout->enable();
 
