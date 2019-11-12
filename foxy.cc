@@ -341,9 +341,17 @@ long mywin::adminLogin(FXObject*,FXSelector,void*)
 	pwBox->setText("");
 	pwBox->execute();
 	if(pwBox->getText()=="password")
+	{
+		FXMessageBox mb(this,"Login success!","You have logged in as admin",
+			NULL,MBOX_OK);
+		mb.execute();
 		puts("login success!");
+	}
 	else
 	{
+		FXMessageBox mb(this,"Login failed!","You have NOT logged in as admin",
+			NULL,MBOX_OK);
+		mb.execute();
 		puts("login failure");
 		return 1;;
 	}
