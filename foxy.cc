@@ -338,14 +338,14 @@ long mywin::adminLogin(FXObject*,FXSelector,void*)
 {
 	puts("admin login");
 
+	// Verify password is correct
 	pwBox->setText("");
-	pwBox->execute(PLACEMENT_SCREEN);
-	if(pwBox->getText()=="password")
+	if(pwBox->execute(PLACEMENT_SCREEN)==1 && (pwBox->getText()=="password"))
 	{
-		FXMessageBox mb(this,"Login success!","You have logged in as admin",
-			NULL,MBOX_OK);
-		mb.execute(PLACEMENT_SCREEN);
-		puts("login success!");
+			FXMessageBox mb(this,"Login success!","You have logged in as admin",
+				NULL,MBOX_OK);
+			mb.execute(PLACEMENT_SCREEN);
+			puts("login success!");
 	}
 	else
 	{

@@ -2,5 +2,5 @@
 section .data
 global LICENSE_STRING
 LICENSE_STRING:
-	incbin "license.txt"
+	incbin "LICENSE"
 db 0
