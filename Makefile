@@ -24,9 +24,9 @@ WINDRES=
 STATIC=
 endif
 
-all: inc.o attend
+all: attend
 	# Finished!
-attend:
+attend: inc.o
 	$(WINDRES)
 	$(CXX) inc.o $(TG).cc -o $(TG) $(CFLAGS) $(OSDIR) \
 		 $(STATIC) $(LDFLAGS) $(WINLIBS) -I $(INCDIR)

@@ -43,6 +43,8 @@ class mywin : public FXMainWindow
 	FXDialogBox			*tabWin;
 	FXTable				*tabWinTable;
 
+	FXInputDialog		*pwBox;
+
 	FXMenuTitle			*mbSearch;
 
 	FXMenuCommand		*fiOpen;
@@ -178,6 +180,8 @@ mywin::mywin(FXApp*a) : FXMainWindow(a,PROGRAMTITLE)
 	choice=new FXChoiceBox(this,"Prompt","Are you sure?",NULL,"Yes\nNo",LIST_BROWSESELECT);
 	choice->resize(320,190);
 
+	pwBox=new FXInputDialog(this,"Admin Dialog","Password",NULL,INPUTDIALOG_PASSWORD);
+
 	// MenuBar
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED);
 	mpFile=new FXMenuPane(this);
@@ -258,6 +262,7 @@ mywin::~mywin()
 	delete mpSearch;
 	delete mpHelp;
 	delete dialogBox;
+	delete pwBox;
 	//delete progress;
 	delete choice;
 	delete list;
@@ -332,6 +337,17 @@ long mywin::editStudents(FXObject*,FXSelector,void*)
 long mywin::adminLogin(FXObject*,FXSelector,void*)
 {
 	puts("admin login");
+
+	pwBox->setText("");
+	pwBox->execute();
+	if(pwBox->getText()=="password")
+		puts("login success!");
+	else
+	{
+		puts("login failure");
+		return 1;;
+	}
+
 	quAll->enable();
 	quName->enable();
 	quTardies->enable();
