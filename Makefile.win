@@ -1,0 +1,16 @@
+PROG=attend
+
+CXXFLAGS=-Wfatal-errors -Wall -Wextra -no-pie -I /mingw64/include -D AT_WINDOWS -L /mingw64/lib
+LDFLAGS=-lFOX-1.6 -lsqlite3 -luser32 -lkernel32 -ladvapi32 -lgdi32 -lws2_32
+
+.PHONY: all clean
+all: $(PROG)
+$(PROG): inc.o
+	windres rc.rc -o rc.o
+	$(CXX) inc.o $@.cc -o $@ $(CXXFLAGS) $(LDFLAGS)
+inc.o:
+	nasm inc.asm -f elf64
+rc.o:
+	windres rc.rc -o rc.o
+clean:
+	$(RM) $(PROG) *.o
