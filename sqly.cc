@@ -1,6 +1,7 @@
 #pragma once
 #include<sqlite3.h>
 #include<assert.h>
+#include<unistd.h>
 #include"dir.cc"
 
 class Db
@@ -135,13 +136,15 @@ void Db::outputCsv(const char*sql,const char*fname)
 		strcat(t,dir->getDataDir(fname));
 		strcat(t," &");
 		printf("systemcall: '%s'\n",t);
-		system(t);
+		//system(t);
+		/*FILE**/f=popen(t,"r");
 	#else
 		strcpy(t,"gio open ");
 		strcat(t,dir->getDataDir(fname));
 		strcat(t," &");
 		printf("systemcall: '%s'\n",t);
-		system(t);
+		//system(t);
+		/*FILE**/f=popen(t,"r");
 	#endif
 }
 
