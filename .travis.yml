@@ -7,8 +7,6 @@ os:
 	- linux
 before_install:
 	- sudo apt update
+install:
 	- sudo apt install libfox-1.6-dev nasm
 script: make
-	- sudo apt update
-	- sudo apt install libfox-1.6-dev nasm
-	- make
