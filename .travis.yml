@@ -1,8 +1,11 @@
 sudo:		false
 language:	cpp
 compiler:
-- nasm
-- gcc
+	- nasm
+	- gcc
 os:
-- linux
+	- linux
+before_install:
+	- sudo apt update
+	- sudo apt install libfox-1.6-dev nasm
 script:		make
