@@ -6,7 +6,7 @@ compiler:
 os:
 	- linux
 before_install:
-	- sudo apt update
+	- sudo apt-get update
 install:
-	- sudo apt install libfox-1.6-dev nasm
+	- sudo apt-get install libfox-1.6-dev nasm
 script: make
