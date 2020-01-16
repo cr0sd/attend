@@ -5,4 +5,4 @@ os:
 before_install:
   - sudo apt update
   - sudo apt-get -y install libfox-1.6-dev nasm
-script: ./build.sh
+script: make
