@@ -1,8 +1,8 @@
 language: cpp
 compiler: gcc
 os:
-	- linux
+  - linux
 before_install:
-	- sudo apt update
-	- sudo apt-get -y install libfox-1.6-dev nasm
+  - sudo apt update
+  - sudo apt-get -y install libfox-1.6-dev nasm
 script: ./build.sh
