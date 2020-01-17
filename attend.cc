@@ -4,8 +4,8 @@
 #define PROGRAMTITLE "Attend"
 #define COMPILETIME __DATE__ ", " __TIME__
 
-#include"foxy.cc"
-#include"sqly.cc"
+#include"foxy.hh"
+#include"sqly.hh"
 
 #include<time.h>
 #include<stdio.h>

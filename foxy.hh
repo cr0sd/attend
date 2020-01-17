@@ -1,8 +1,8 @@
 #pragma once
 #include<fox-1.6/fx.h>
-#include"sqly.cc"
-#include"dir.cc"
-#include"st.cc"
+#include"sqly.hh"
+#include"dir.hh"
+#include"st.hh"
 #include<time.h>
 
 extern char LICENSE_STRING;
@@ -60,9 +60,9 @@ class mywin : public FXMainWindow
 
 	FXLabel				*adminLabel;
 
-	Db *db;		// sqly.cc
-	Dir *dir;	// dir.cc
-	St *st;		// st.cc
+	Db *db;		// sqly.hh
+	Dir *dir;	// dir.hh
+	St *st;		// st.hh
 
 	mywin(){}
 

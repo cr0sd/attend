@@ -2,7 +2,7 @@
 #include<sqlite3.h>
 #include<assert.h>
 #include<unistd.h>
-#include"dir.cc"
+#include"dir.hh"
 
 class Db
 {
